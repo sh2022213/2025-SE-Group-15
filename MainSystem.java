@@ -30,7 +30,6 @@ public class MainSystem {
         });
     }
 
-
     public void startApplication() {
         // 重新启动应用
         MainSystem.main(new String[]{});
