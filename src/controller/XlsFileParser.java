@@ -14,7 +14,7 @@ public class XlsFileParser implements FileParser {
     @Override    
     public List<Transaction> parse(File file) throws IOException {
         // 这里是解析 xls 文件的具体实现
-        // 目前只是占位，需要根据实际情况编写逻辑
+        // 目前只是占位，需要根据实际情况编写逻辑 
         return new ArrayList<>();
     }
 }
