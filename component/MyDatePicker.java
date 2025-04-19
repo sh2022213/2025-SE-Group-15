@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * 自定义日期选择器组件
+ * 自定义日期和选择器组件
  */
 public class MyDatePicker extends JPanel {
     private JSpinner         dateSpinner;
