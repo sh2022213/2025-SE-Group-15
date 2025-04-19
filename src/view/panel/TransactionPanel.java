@@ -29,7 +29,7 @@ public class TransactionPanel extends JPanel {
     }
 
     private void initComponents() {
-        // 顶部 - 添加交易表单
+        // 顶部 - 添加交易表单.
         add(createTransactionForm(), BorderLayout.NORTH);
 
         // 中部 - 交易表格

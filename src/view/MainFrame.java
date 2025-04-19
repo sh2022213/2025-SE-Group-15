@@ -38,7 +38,7 @@ public class MainFrame extends JFrame {
         tabbedPane.addTab("Dashboard", dashboardPanel);
         tabbedPane.addTab("Transaction Record", transactionPanel);
 
-        // 添加选项卡切换监听
+        // 添加选项卡切换监听.
         tabbedPane.addChangeListener(e -> {
             if (tabbedPane.getSelectedComponent() == dashboardPanel) {
                 dashboardPanel.refreshData(); // 切换到仪表盘时刷新
