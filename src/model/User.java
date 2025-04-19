@@ -39,4 +39,6 @@ public class User {
 
     public String getCurrency() { return currency; }
     public void setCurrency(String currency) { this.currency = currency; }
+
+    
 }
