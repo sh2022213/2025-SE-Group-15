@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 // 实现 txt 文件解析器  
-public class TxtFileParser implements FileParser {  
+public class TxtFileParser implements FileParser {   
     private final FinanceController controller;
 
     public TxtFileParser(FinanceController controller) {
