@@ -1,0 +1,163 @@
+[
+  {
+    "id": "6f82281a-851e-444b-84a8-78a7c4996911",
+    "amount": 20000.0,
+    "category": "Transportation",
+    "type": "INCOME",
+    "date": "2025-04-08",
+    "description": "Transportation subsidy",
+    "isRecurring": false
+  },
+  {
+    "id": "defea58c-49ee-47d5-889f-2d93010c3f44",
+    "amount": 5000.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-04-08",
+    "description": "Treating guests",
+    "isRecurring": false
+  },
+  {
+    "id": "453902b2-a902-4e63-a94c-9a26fe5139ef",
+    "amount": 100.00,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2023-01-01",
+    "description": "Sample data",
+    "isRecurring": false
+  },
+  {
+    "id": "1f5d0bfe-c47e-4ad7-b24a-05e9b1c03288",
+    "amount": 5000.00,
+    "category": "Salary",
+    "type": "INCOME",
+    "date": "2023-01-01",
+    "description": "Monthly salary",
+    "isRecurring": false
+  },
+  {
+    "id": "bcc89f87-24be-4347-b61d-048faa010bc5",
+    "amount": 200.0,
+    "category": "Shopping",
+    "type": "EXPENSE",
+    "date": "2025-04-08",
+    "description": "",
+    "isRecurring": false
+  },
+  {
+    "id": "2e0c7e97-8330-47e7-b68a-062888c1813e",
+    "amount": 180.0,
+    "category": "Shopping",
+    "type": "EXPENSE",
+    "date": "2025-04-08",
+    "description": "",
+    "isRecurring": false
+  },
+  {
+    "id": "69f71749-c2a9-4191-99d0-b9678e6fd614",
+    "amount": 20000.0,
+    "category": "Salary",
+    "type": "INCOME",
+    "date": "2025-04-12",
+    "description": "Year - end bonus",
+    "isRecurring": false
+  },
+  {
+    "id": "a4a95022-4f1d-4014-9dc2-9511aef224e3",
+    "amount": 300.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-04-12",
+    "description": "meal",
+    "isRecurring": false
+  },
+  {
+    "id": "15ead2a3-82bf-491b-87ea-3bfe9e413dbf",
+    "amount": 50.0,
+    "category": "Transportation",
+    "type": "EXPENSE",
+    "date": "2025-04-12",
+    "description": "bus",
+    "isRecurring": false
+  },
+  {
+    "id": "f60bc888-4bd5-4b6c-a458-ffc48810b166",
+    "amount": 20.0,
+    "category": "Transportation",
+    "type": "EXPENSE",
+    "date": "2025-04-12",
+    "description": "taxi",
+    "isRecurring": false
+  },
+  {
+    "id": "3d117408-9db5-4229-ab47-76359334ee94",
+    "amount": 500.0,
+    "category": "Shopping",
+    "type": "EXPENSE",
+    "date": "2025-04-13",
+    "description": "mall",
+    "isRecurring": false
+  },
+  {
+    "id": "6ccb8dcf-bb1a-49ad-baf5-9a9a1e66ba80",
+    "amount": 500.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-04-13",
+    "description": "drink",
+    "isRecurring": false
+  },
+  {
+    "id": "2cd2a9b8-3bb0-49f0-ae8a-f2ce6d23ccba",
+    "amount": 35.0,
+    "category": "Shopping",
+    "type": "EXPENSE",
+    "date": "2025-04-13",
+    "description": "drink",
+    "isRecurring": false
+  },
+  {
+    "id": "817fb319-4198-4678-81c9-903fe3786546",
+    "amount": 15.0,
+    "category": "Salary",
+    "type": "EXPENSE",
+    "date": "2025-04-13",
+    "description": "dinner",
+    "isRecurring": false
+  },
+  {
+    "id": "bf5fc671-acfb-4dc5-91d1-6a195ae5738f",
+    "amount": 111.00,
+    "category": "Education",
+    "type": "EXPENSE",
+    "date": "2025-04-14",
+    "description": "book",
+    "isRecurring": false
+  },
+  {
+    "id": "2164616e-b842-4c49-8f66-df8a4de9589c",
+    "amount": 5550.00,
+    "category": "Salary",
+    "type": "INCOME",
+    "date": "2025-01-14",
+    "description": "Monthly salary",
+    "isRecurring": false
+  },
+  {
+    "id": "6ba1ee8a-0f99-4c1c-b842-30a8bb6b3e04",
+    "amount": 0.0,
+    "type": "INCOME",
+    "date": "2025-04-17",
+    "description": "",
+    "isRecurring": false
+  },
+  {
+    "id": "d26d6ab1-1f87-448b-bc14-a60134729ac9",
+    "amount": 10.0,
+    "category": "Education",
+    "type": "INCOME",
+    "date": "2025-04-17",
+    "description": "book",
+    "isRecurring": false
+  }
+]
