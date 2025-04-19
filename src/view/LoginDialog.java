@@ -3,7 +3,7 @@ package com.personalfinance.view;
 import com.personalfinance.controller.FinanceController;
 import com.personalfinance.model.User;
 
-import javax.swing.*;
+import javax.swing.*; 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
