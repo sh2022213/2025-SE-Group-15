@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;  
 import java.util.stream.Collectors;
 
-public class FinanceController {  
+public class FinanceController {   
     private final AIAnalyzer        aiAnalyzer;
     private final JsonDataManager   dataManager;
     private       List<Transaction> transactions;
