@@ -58,7 +58,7 @@ public class UserProfilePanel extends JPanel {
         gbc.gridx = 1; gbc.gridy = 1;
         formPanel.add(passwordField, gbc);
 
-        // Confirm password
+        // Confirm password.
         gbc.gridx = 0; gbc.gridy = 2;
         formPanel.add(new JLabel("Confirm Password:"), gbc);
         JPasswordField confirmField = new JPasswordField(15);
