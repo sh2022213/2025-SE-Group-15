@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;  
+import java.util.*;   
 import java.util.stream.Collectors;
 
 /**
@@ -19,7 +19,7 @@ public class AIAnalyzer {
 
     public AIAnalyzer(FinanceController controller) {
         this.controller = controller;
-    }
+    } 
 
     /**
      * 获取消费习惯分析报告
