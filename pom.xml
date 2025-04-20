@@ -1,67 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Maven项目的核心配置文件，定义项目信息和构建规则 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Maven模型版本，固定值 -->
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.personalfinance</groupId>
-    <artifactId>personal-finance-manager</artifactId>
-    <version>1.0.0</version>
-    <packaging>jar</packaging>
+    <!-- 项目坐标（唯一标识） -->
+    <groupId>com.personalfinance</groupId>          <!-- 组织/项目域名反写 -->
+    <artifactId>personal-finance-manager</artifactId> <!-- 项目名称/模块名 -->
+    <version>1.0.0</version>                       <!-- 版本号 -->
+    <packaging>jar</packaging>                     <!-- 打包类型为可执行JAR -->
 
-    <name>AI-Powered Personal Finance Tracker</name>
-    <description>Java Swing application for tracking personal finances with JSON storage</description>
+    <!-- 项目元数据 -->
+    <name>AI-Powered Personal Finance Tracker</name>    <!-- 项目展示名称 -->
+    <description>Java Swing application for tracking personal finances with JSON storage</description> <!-- 项目描述 -->
 
+    <!-- 属性配置（可复用变量） -->
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <gson.version>2.10.1</gson.version>
-        <jfreechart.version>1.5.3</jfreechart.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- 源代码编码格式 -->
+        <java.version>1.8</java.version>            <!-- Java编译版本 -->
+        <maven.compiler.source>1.8</maven.compiler.source> <!-- 源代码兼容版本 -->
+        <maven.compiler.target>1.8</maven.compiler.target> <!-- 目标字节码版本 -->
+        <gson.version>2.10.1</gson.version>         <!-- Gson库版本 -->
+        <jfreechart.version>1.5.3</jfreechart.version> <!-- JFreeChart图表库版本 -->
     </properties>
 
+    <!-- 依赖管理 -->
     <dependencies>
-        <!-- JSON 处理 -->
+        <!-- JSON处理库：用于序列化和反序列化JSON数据 -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>${gson.version}</version>
+            <version>${gson.version}</version> <!-- 使用属性中定义的版本 -->
         </dependency>
 
-        <!-- 图表库 -->
+        <!-- 图表绘制库：用于生成财务统计图表 -->
         <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
-            <version>${jfreechart.version}</version>
+            <version>${jfreechart.version}</version> <!-- 使用属性定义版本 -->
         </dependency>
 
-        <!-- 单元测试 -->
+        <!-- 单元测试框架 -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
-            <scope>test</scope>
+            <scope>test</scope> <!-- 仅用于测试代码 -->
         </dependency>
     </dependencies>
 
+    <!-- 构建配置 -->
     <build>
         <plugins>
-            <!-- 编译插件 -->
+            <!-- 编译插件：配置Java编译参数 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>${java.version}</source> <!-- 指定源代码版本 -->
+                    <target>${java.version}</target> <!-- 指定目标字节码版本 -->
                     <compilerArgs>
-                        <arg>-Xlint:unchecked</arg>
+                        <arg>-Xlint:unchecked</arg> <!-- 启用编译警告 -->
                     </compilerArgs>
                 </configuration>
             </plugin>
 
-            <!-- 打包可执行JAR -->
+            <!-- 打包插件：创建包含依赖的可执行JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -69,51 +76,53 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.personalfinance.MainSystem</mainClass>
+                            <mainClass>com.personalfinance.MainSystem</mainClass> <!-- 主类全限定名 -->
                         </manifest>
                     </archive>
                     <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                        <descriptorRef>jar-with-dependencies</descriptorRef> <!-- 打包类型 -->
                     </descriptorRefs>
-                    <finalName>${project.artifactId}-${project.version}</finalName>
+                    <finalName>${project.artifactId}-${project.version}</finalName> <!-- 最终文件名 -->
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <phase>package</phase> <!-- 绑定到打包阶段 -->
                         <goals>
-                            <goal>single</goal>
+                            <goal>single</goal> <!-- 执行单次打包 -->
                         </goals>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- 资源文件处理 -->
+            <!-- 资源处理插件：处理非代码资源文件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.3.1</version>
                 <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <encoding>${project.build.sourceEncoding}</encoding> <!-- 资源文件编码 -->
                 </configuration>
             </plugin>
         </plugins>
 
+        <!-- 资源文件配置 -->
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>src/main/resources</directory> <!-- 资源文件目录 -->
                 <includes>
-                    <include>**/*.json</include>
-                    <include>**/*.png</include>
-                    <include>**/*.properties</include>
+                    <include>**/*.json</include> <!-- 包含JSON配置文件 -->
+                    <include>**/*.png</include>  <!-- 包含图片资源 -->
+                    <include>**/*.properties</include> <!-- 包含属性文件 -->
                 </includes>
-                <filtering>true</filtering> <!-- 允许变量替换 -->
+                <filtering>true</filtering> <!-- 启用变量替换 -->
             </resource>
         </resources>
     </build>
 
-    <!-- 防止依赖冲突  -->
+    <!-- 依赖管理（解决版本冲突） -->
     <dependencyManagement>
         <dependencies>
+            <!-- 排除jfreechart中的servlet-api依赖 -->
             <dependency>
                 <groupId>org.jfree</groupId>
                 <artifactId>jfreechart</artifactId>
