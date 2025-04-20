@@ -9,8 +9,8 @@ import com.personalfinance.storage.JsonDataManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.*;   
+import java.util.stream.Collectors;  
 
 public class FinanceController {
     private final AIAnalyzer        aiAnalyzer;
