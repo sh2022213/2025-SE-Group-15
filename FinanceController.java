@@ -11,7 +11,7 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;   
 import java.util.stream.Collectors;  
-
+                                                     
 public class FinanceController {
     private final AIAnalyzer        aiAnalyzer;
     private final JsonDataManager   dataManager;
