@@ -17,7 +17,7 @@ import java.util.UUID;
 /**
  * Excel 文件解析器实现
  * 支持格式：金额 | 类型 | 日期 | 描述 | 分类(可选)
- * 日期格式：yyyy-MM-dd
+ * 日期格式：yyyy-MM-dd  
  */
 public class XlsFileParser implements FileParser {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
