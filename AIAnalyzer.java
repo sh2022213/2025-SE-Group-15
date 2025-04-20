@@ -101,7 +101,7 @@ public class AIAnalyzer {
 
         return forecast;
     }
-
+    
     public String matchCategory(String description) {
         return categoryMatcher.match(description);
     }
