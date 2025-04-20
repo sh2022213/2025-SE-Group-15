@@ -101,6 +101,7 @@ public class FinanceController {
     private void updateBudgetSpending() {
         budgets.forEach(budget -> {
             BigDecimal spent = transactions.stream()
+                    .filter(t -> t.getCategory() != null)
                     .filter(t -> t.getCategory().equals(budget.getCategory()))
                     .filter(t -> t.getType().equals("EXPENSE"))
                     .filter(t -> !t.getDate().before(budget.getStartDate()))
@@ -329,11 +330,4 @@ public class FinanceController {
         return true;
     }
 
-    private String getResourcePath(String resourceName) {
-        java.net.URL resource = getClass().getClassLoader().getResource(resourceName);
-        if (resource != null) {
-            return resource.getPath();
-        }
-        return null;
-    }
 }
