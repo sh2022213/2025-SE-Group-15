@@ -112,7 +112,7 @@ public class AIAnalyzer {
         BigDecimal totalSpending = calculateTotalSpending(transactions);
         Map<String, BigDecimal> categorySpending = calculateCategorySpending(transactions);
 
-        return categorySpending.entrySet().stream()
+        return categorySpending.entrySet().stream() 
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .map(entry -> formatCategorySpending(entry, totalSpending))
                 .collect(Collectors.toList());
