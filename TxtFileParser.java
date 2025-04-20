@@ -47,7 +47,7 @@ public class TxtFileParser implements FileParser {
                 parseTransactionLine(line, i + 1).ifPresent(transactions::add);
             }
         }
-              
+               
         return transactions;
     }
 
