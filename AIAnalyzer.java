@@ -11,76 +11,135 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * AI Financial Analysis Engine
+ * AI财务分析引擎
  */
 public class AIAnalyzer {
-    private static final int RECENT_MONTHS = 6;
-    private static final BigDecimal SAVINGS_RATE_TARGET = new BigDecimal("0.2");
-    private static final BigDecimal MONTHLY_VARIATION_THRESHOLD = new BigDecimal("0.3");
-    private static final int STANDARD_DEVIATION_MULTIPLIER = 2;
-    
-    private final FinanceController controller;
-    private final CategoryMatcher categoryMatcher;
+    private static final int RECENT_MONTHS = 6; // 分析最近6个月数据
+    private final        FinanceController controller;
 
     public AIAnalyzer(FinanceController controller) {
         this.controller = controller;
-        this.categoryMatcher = new CategoryMatcher(controller);
     }
 
-    // ========== Public API Methods ==========
-
+    /**
+     * 获取消费习惯分析报告
+     */
     public String getSpendingHabitsReport() {
         List<Transaction> transactions = controller.getTransactions();
         if (transactions.isEmpty()) {
             return "No transaction data available for analysis at the moment";
         }
 
-        ReportBuilder report = new ReportBuilder()
-            .appendHeader("Consumer Habit Analysis Report")
-            
-            // 1. Main consumption categories
-            .appendSection("Main consumption categories:", 
-                generateCategorySpendingAnalysis(transactions))
-            
-            // 2. Monthly consumption trend
-            .appendSection("Monthly consumption trend:", 
-                generateMonthlyTrendAnalysis(transactions))
-            
-            // 3. Abnormal consumption detection
-            .appendSection("Abnormal consumption detection:", 
-                generateAnomalyAnalysis(transactions))
-            
-            // 4. Budget recommendations
-            .appendSection("Budget recommendations:", 
-                generateBudgetAdvice());
+        StringBuilder report = new StringBuilder();
+        report.append("=== Consumer Habit Analysis Report ===\n\n");
 
-        return report.build();
+        // 1. 主要消费分类
+        report.append("1. Main consumption categories:\n");
+            Map<String, BigDecimal> categorySpending = getCategorySpending(transactions);
+        categorySpending.entrySet().stream()
+                .sorted(Map.Entry.<String, BigDecimal>comparingByValue().reversed())
+                .forEach(entry -> {
+                    report.append(String.format(" - %s: %s (%.1f%%)\n",
+                            entry.getKey(),
+                            formatMoney(entry.getValue()),
+                            getPercentage(entry.getValue(), getTotalSpending(transactions))
+                    ));
+                });
+        report.append("\n");
+
+        // 2. 月度消费趋势
+        report.append("2. Monthly consumption trend:\n");
+        Map<String, BigDecimal> monthlyTrend = getMonthlyTrend(transactions);
+        monthlyTrend.forEach((month, amount) -> {
+            report.append(String.format(" - %s: %s\n", month, formatMoney(amount)));
+        });
+        report.append("\n");
+
+        // 3. 异常消费检测
+        report.append("3. Abnormal consumption detection:\n");
+        detectAnomalies(transactions).forEach(anomaly -> {
+            report.append(String.format(" - [Exception] %s: %s (%s)\n",
+                    anomaly.get("date"),
+                    formatMoney(new BigDecimal(anomaly.get("amount"))),
+                    anomaly.get("description")
+            ));
+        });
+        if (detectAnomalies(transactions).isEmpty()) {
+            report.append(" - No obvious abnormal consumption detected\n");
+        }
+        report.append("\n");
+
+        // 4. 预算执行情况
+        report.append("4. Budget recommendations:\n");
+        generateBudgetAdvice().forEach(advice -> {
+            report.append(String.format(" - %s\n", advice));
+        });
+
+        return report.toString();
     }
 
+    /**
+     * 检测异常消费（超过平均值的2倍标准差）
+     */
     public List<Map<String, String>> detectAnomalies(List<Transaction> transactions) {
-        List<Transaction> expenses = filterExpenses(transactions);
-        if (expenses.isEmpty()) return Collections.emptyList();
+        List<Transaction> expenses = transactions.stream()
+                .filter(t -> t.isExpense())
+                .collect(Collectors.toList());
 
-        BigDecimal average = calculateAverageSpending(expenses);
+        if (expenses.isEmpty()) { return Collections.emptyList(); }
+
+        // 计算平均值和标准差
+        BigDecimal average = getAverageSpending(expenses);
         BigDecimal stdDev = calculateStandardDeviation(expenses, average);
-        BigDecimal threshold = average.add(stdDev.multiply(new BigDecimal(STANDARD_DEVIATION_MULTIPLIER)));
+
+        // 检测异常（平均值 + 2倍标准差）
+        BigDecimal threshold = average.add(stdDev.multiply(new BigDecimal(2)));
 
         return expenses.stream()
                 .filter(t -> t.getAmount().compareTo(threshold) > 0)
-                .sorted(Comparator.comparing(Transaction::getAmount).reversed())
-                .map(this::createAnomalyRecord)
+                .sorted((t1, t2) -> t2.getAmount().compareTo(t1.getAmount()))
+                .map(t -> {
+                    Map<String, String> anomaly = new HashMap<>();
+                    anomaly.put("date", formatDate(t.getDate()));
+                    anomaly.put("amount", t.getAmount().toString());
+                    anomaly.put("description", t.getDescription());
+                    anomaly.put("category", t.getCategory());
+                    return anomaly;
+                })
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 生成预算优化建议
+     */
     public List<String> generateBudgetAdvice() {
         List<String> advice = new ArrayList<>();
-        BigDecimal totalIncome = calculateTotalIncome();
-        BigDecimal totalSpending = calculateTotalSpending(controller.getTransactions());
-        BigDecimal savingsRate = calculateSavingsRate(totalIncome, totalSpending);
+        BigDecimal totalIncome = getTotalIncome();
+        BigDecimal totalSpending = getTotalSpending(controller.getTransactions());
 
-        advice.add(generateSavingsRateAdvice(savingsRate));
-        advice.addAll(generateTopCategoryAdvice());
-        
+        // 储蓄率分析
+        BigDecimal savingsRate = totalIncome.compareTo(BigDecimal.ZERO) > 0 ?
+                totalIncome.subtract(totalSpending).divide(totalIncome, 4, RoundingMode.HALF_UP) :
+                BigDecimal.ZERO;
+
+        if (savingsRate.compareTo(new BigDecimal("0.2")) < 0) {
+            advice.add("The current savings rate is relatively low(" + formatPercentage(savingsRate) + ")，It is recommended to increase the savings ratio to over 20%");
+        } else {
+            advice.add("The current savings rate is good(" + formatPercentage(savingsRate) + ")，Continue to maintain");
+        }
+
+        // 分类支出建议
+        getCategorySpending(controller.getTransactions()).entrySet().stream()
+                .sorted(Map.Entry.<String, BigDecimal>comparingByValue().reversed())
+                .limit(3)
+                .forEach(entry -> {
+                    advice.add(String.format("Main expenditure category 【%s】 accounts for%.1f%%, it is recommended to pay attention to it",
+                            entry.getKey(),
+                            getPercentage(entry.getValue(), totalSpending))
+                    );
+                });
+
+        // 月度波动建议
         if (hasSignificantMonthlyVariation()) {
             advice.add("Detected significant fluctuations in monthly expenses, it is recommended to balance monthly consumption!");
         }
@@ -88,9 +147,17 @@ public class AIAnalyzer {
         return advice;
     }
 
+    /**
+     * 获取未来3个月支出预测
+     */
     public Map<String, BigDecimal> getSpendingForecast() {
-        Map<String, BigDecimal> monthlyTrend = calculateMonthlyTrend(controller.getTransactions());
-        BigDecimal avgLast3Months = calculateRecentMonthsAverage(monthlyTrend, 3);
+        Map<String, BigDecimal> monthlyTrend = getMonthlyTrend(controller.getTransactions());
+
+        // 简单预测：取最近3个月平均值
+        BigDecimal avgLast3Months = monthlyTrend.values().stream()
+                .limit(3)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(new BigDecimal(Math.min(3, monthlyTrend.size())), 2, RoundingMode.HALF_UP);
 
         LocalDate now = LocalDate.now();
         Map<String, BigDecimal> forecast = new LinkedHashMap<>();
@@ -101,57 +168,12 @@ public class AIAnalyzer {
 
         return forecast;
     }
-    
-    public String matchCategory(String description) {
-        return categoryMatcher.match(description);
-    }
 
-    // ========== Analysis Generation Methods ==========
+    // ========== 辅助方法 ==========
 
-    private List<String> generateCategorySpendingAnalysis(List<Transaction> transactions) {
-        BigDecimal totalSpending = calculateTotalSpending(transactions);
-        Map<String, BigDecimal> categorySpending = calculateCategorySpending(transactions);
-
-        return categorySpending.entrySet().stream() 
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .map(entry -> formatCategorySpending(entry, totalSpending))
-                .collect(Collectors.toList());
-    }
-
-    private List<String> generateMonthlyTrendAnalysis(List<Transaction> transactions) {
-        return calculateMonthlyTrend(transactions).entrySet().stream()
-                .map(entry -> String.format(" - %s: %s", entry.getKey(), formatMoney(entry.getValue())))
-                .collect(Collectors.toList());
-    }
-
-    private List<String> generateAnomalyAnalysis(List<Transaction> transactions) {
-        List<Map<String, String>> anomalies = detectAnomalies(transactions);
-        if (anomalies.isEmpty()) {
-            return Collections.singletonList(" - No obvious abnormal consumption detected");
-        }
-        
-        return anomalies.stream()
-                .map(this::formatAnomaly)
-                .collect(Collectors.toList());
-    }
-
-    private List<String> generateTopCategoryAdvice() {
-        Map<String, BigDecimal> categorySpending = calculateCategorySpending(controller.getTransactions());
-        BigDecimal totalSpending = calculateTotalSpending(controller.getTransactions());
-
-        return categorySpending.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .limit(3)
-                .map(entry -> String.format("Main expenditure category 【%s】 accounts for%.1f%%, it is recommended to pay attention to it",
-                        entry.getKey(),
-                        calculatePercentage(entry.getValue(), totalSpending)))
-                .collect(Collectors.toList());
-    }
-
-    // ========== Calculation Methods ==========
-
-    private Map<String, BigDecimal> calculateCategorySpending(List<Transaction> transactions) {
-        return filterExpenses(transactions).stream()
+    private Map<String, BigDecimal> getCategorySpending(List<Transaction> transactions) {
+        return transactions.stream()
+                .filter(Transaction::isExpense)
                 .collect(Collectors.groupingBy(
                         Transaction::getCategory,
                         Collectors.reducing(
@@ -162,7 +184,7 @@ public class AIAnalyzer {
                 ));
     }
 
-    private Map<String, BigDecimal> calculateMonthlyTrend(List<Transaction> transactions) {
+    private Map<String, BigDecimal> getMonthlyTrend(List<Transaction> transactions) {
         Map<String, BigDecimal> trend = new TreeMap<>();
         LocalDate now = LocalDate.now();
 
@@ -170,8 +192,9 @@ public class AIAnalyzer {
             LocalDate month = now.minusMonths(i);
             String monthKey = month.getMonthValue() + "Month";
 
-            BigDecimal monthlyTotal = filterExpenses(transactions).stream()
+            BigDecimal monthlyTotal = transactions.stream()
                     .filter(t -> isSameMonth(t.getDate(), month))
+                    .filter(Transaction::isExpense)
                     .map(Transaction::getAmount)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -181,27 +204,28 @@ public class AIAnalyzer {
         return trend;
     }
 
-    private BigDecimal calculateTotalSpending(List<Transaction> transactions) {
-        return filterExpenses(transactions).stream()
+    private BigDecimal getTotalSpending(List<Transaction> transactions) {
+        return transactions.stream()
+                .filter(Transaction::isExpense)
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private BigDecimal calculateTotalIncome() {
+    private BigDecimal getTotalIncome() {
         return controller.getTransactions().stream()
                 .filter(Transaction::isIncome)
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private BigDecimal calculateAverageSpending(List<Transaction> transactions) {
-        if (transactions.isEmpty()) return BigDecimal.ZERO;
-        return calculateTotalSpending(transactions)
-                .divide(new BigDecimal(transactions.size()), 2, RoundingMode.HALF_UP);
+    private BigDecimal getAverageSpending(List<Transaction> transactions) {
+        if (transactions.isEmpty()) { return BigDecimal.ZERO; }
+        BigDecimal total = getTotalSpending(transactions);
+        return total.divide(new BigDecimal(transactions.size()), 2, RoundingMode.HALF_UP);
     }
 
     private BigDecimal calculateStandardDeviation(List<Transaction> transactions, BigDecimal mean) {
-        if (transactions.size() < 2) return BigDecimal.ZERO;
+        if (transactions.size() < 2) { return BigDecimal.ZERO; }
 
         BigDecimal variance = transactions.stream()
                 .map(t -> t.getAmount().subtract(mean).pow(2))
@@ -212,86 +236,27 @@ public class AIAnalyzer {
                 .setScale(2, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal calculateSavingsRate(BigDecimal totalIncome, BigDecimal totalSpending) {
-        return totalIncome.compareTo(BigDecimal.ZERO) > 0 ?
-                totalIncome.subtract(totalSpending).divide(totalIncome, 4, RoundingMode.HALF_UP) :
-                BigDecimal.ZERO;
-    }
-
-    private BigDecimal calculateRecentMonthsAverage(Map<String, BigDecimal> monthlyTrend, int months) {
-        return monthlyTrend.values().stream()
-                .limit(months)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .divide(new BigDecimal(Math.min(months, monthlyTrend.size())), 2, RoundingMode.HALF_UP);
-    }
-
-    private double calculatePercentage(BigDecimal part, BigDecimal total) {
-        if (total.compareTo(BigDecimal.ZERO) == 0) return 0;
-        return part.divide(total, 4, RoundingMode.HALF_UP).doubleValue() * 100;
-    }
-
-    // ========== Helper Methods ==========
-
-    private List<Transaction> filterExpenses(List<Transaction> transactions) {
-        return transactions.stream()
-                .filter(Transaction::isExpense)
-                .collect(Collectors.toList());
-    }
-
     private boolean hasSignificantMonthlyVariation() {
-        Map<String, BigDecimal> monthlyTrend = calculateMonthlyTrend(controller.getTransactions());
-        if (monthlyTrend.size() < 3) return false;
+        Map<String, BigDecimal> monthlyTrend = getMonthlyTrend(controller.getTransactions());
+        if (monthlyTrend.size() < 3) { return false; }
 
-        BigDecimal avg = calculateRecentMonthsAverage(monthlyTrend, monthlyTrend.size());
-        BigDecimal stdDev = calculateStandardDeviation(
-                monthlyTrend.values().stream()
-                        .map(amount -> new Transaction(null, amount, null, null, true))
-                        .collect(Collectors.toList()),
-                avg
-        );
+        BigDecimal avg = monthlyTrend.values().stream()
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(new BigDecimal(monthlyTrend.size()), 2, RoundingMode.HALF_UP);
 
-        return stdDev.compareTo(avg.multiply(MONTHLY_VARIATION_THRESHOLD)) > 0;
+        BigDecimal stdDev = monthlyTrend.values().stream()
+                .map(v -> v.subtract(avg).pow(2))
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(new BigDecimal(monthlyTrend.size()), 10, RoundingMode.HALF_UP);
+        stdDev = new BigDecimal(Math.sqrt(stdDev.doubleValue()));
+
+        return stdDev.compareTo(avg.multiply(new BigDecimal("0.3"))) > 0;
     }
 
     private boolean isSameMonth(Date date, LocalDate localDate) {
         LocalDate transactionDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         return transactionDate.getMonth() == localDate.getMonth() &&
                 transactionDate.getYear() == localDate.getYear();
-    }
-
-    private Map<String, String> createAnomalyRecord(Transaction transaction) {
-        Map<String, String> anomaly = new HashMap<>();
-        anomaly.put("date", formatDate(transaction.getDate()));
-        anomaly.put("amount", transaction.getAmount().toString());
-        anomaly.put("description", transaction.getDescription());
-        anomaly.put("category", transaction.getCategory());
-        return anomaly;
-    }
-
-    private String generateSavingsRateAdvice(BigDecimal savingsRate) {
-        String status = savingsRate.compareTo(SAVINGS_RATE_TARGET) < 0 ? "relatively low" : "good";
-        return String.format("The current savings rate is %s(%s), %s",
-                status,
-                formatPercentage(savingsRate),
-                savingsRate.compareTo(SAVINGS_RATE_TARGET) < 0 ? 
-                        "It is recommended to increase the savings ratio to over 20%" : 
-                        "Continue to maintain");
-    }
-
-    // ========== Formatting Methods ==========
-
-    private String formatCategorySpending(Map.Entry<String, BigDecimal> entry, BigDecimal total) {
-        return String.format(" - %s: %s (%.1f%%)",
-                entry.getKey(),
-                formatMoney(entry.getValue()),
-                calculatePercentage(entry.getValue(), total));
-    }
-
-    private String formatAnomaly(Map<String, String> anomaly) {
-        return String.format(" - [Exception] %s: %s (%s)",
-                anomaly.get("date"),
-                formatMoney(new BigDecimal(anomaly.get("amount"))),
-                anomaly.get("description"));
     }
 
     private String formatMoney(BigDecimal amount) {
@@ -306,127 +271,119 @@ public class AIAnalyzer {
         return new SimpleDateFormat("yyyy-MM-dd").format(date);
     }
 
-    // ========== Inner Helper Classes ==========
-
-    private static class ReportBuilder {
-        private final StringBuilder builder = new StringBuilder();
-        
-        public ReportBuilder appendHeader(String header) {
-            builder.append("=== ").append(header).append(" ===\n\n");
-            return this;
-        }
-        
-        public ReportBuilder appendSection(String title, List<String> content) {
-            builder.append(title).append("\n");
-            content.forEach(line -> builder.append(line).append("\n"));
-            builder.append("\n");
-            return this;
-        }
-        
-        public String build() {
-            return builder.toString();
-        }
+    private double getPercentage(BigDecimal part, BigDecimal total) {
+        if (total.compareTo(BigDecimal.ZERO) == 0) {return 0;}
+        return part.divide(total, 4, RoundingMode.HALF_UP).doubleValue() * 100;
     }
 
-    private static class CategoryMatcher {
-        private final FinanceController controller;
-        private final Map<String, List<String>> keywordMap;
-        
-        public CategoryMatcher(FinanceController controller) {
-            this.controller = controller;
-            this.keywordMap = createKeywordMap();
+    /**
+     * 根据交易描述智能匹配分类
+     * @param description 交易描述
+     * @return 匹配到的分类，如果无法匹配则返回null
+     */
+    public String matchCategory(String description) {
+        if (description == null || description.trim().isEmpty()) {
+            return null;
         }
-        
-        public String match(String description) {
-            if (description == null || description.trim().isEmpty()) {
-                return null;
-            }
 
-            String descLower = description.toLowerCase();
-            List<String> categories = controller.getUser().getCategories();
-            if (categories.isEmpty()) return null;
-
-            // 1. Check keyword matches
-            String keywordMatch = matchByKeywords(descLower, categories);
-            if (keywordMatch != null) return keywordMatch;
-
-            // 2. Check historical transactions
-            String historyMatch = matchByHistory(descLower);
-            if (historyMatch != null) return historyMatch;
-
-            // 3. Default category
-            return getDefaultCategory(descLower);
+        // 获取所有可用分类
+        List<String> categories = controller.getUser().getCategories();
+        if (categories.isEmpty()) {
+            return null;
         }
-        
-        private String matchByKeywords(String description, List<String> categories) {
-            for (Map.Entry<String, List<String>> entry : keywordMap.entrySet()) {
-                String category = entry.getKey();
-                if (categories.contains(category)) {
-                    for (String keyword : entry.getValue()) {
-                        if (description.contains(keyword)) {
-                            return category;
-                        }
+
+        // 转换为小写方便匹配
+        String descLower = description.toLowerCase();
+
+        // 1. 首先检查是否有明确的分类关键词匹配
+        Map<String, List<String>> keywordMap = createCategoryKeywordsMap();
+        for (Map.Entry<String, List<String>> entry : keywordMap.entrySet()) {
+            String category = entry.getKey();
+            if (categories.contains(category)) { // 确保该分类在当前用户分类列表中
+                for (String keyword : entry.getValue()) {
+                    if (descLower.contains(keyword)) {
+                        return category;
                     }
                 }
             }
-            return null;
         }
-        
-        private String matchByHistory(String description) {
-            Map<String, Integer> categoryMatchCount = new HashMap<>();
-            List<Transaction> userTransactions = controller.getTransactions();
 
-            for (Transaction t : userTransactions) {
-                if (t.getDescription() != null && t.getDescription().toLowerCase().contains(description)) {
-                    categoryMatchCount.merge(t.getCategory(), 1, Integer::sum);
-                }
+        // 2. 如果没有明确匹配，查找用户历史交易中最相似的描述
+        Map<String, Integer> categoryMatchCount = new HashMap<>();
+        List<Transaction> userTransactions = controller.getTransactions();
+
+        for (Transaction t : userTransactions) {
+            if (t.getDescription() != null && t.getDescription().toLowerCase().contains(descLower)) {
+                categoryMatchCount.merge(t.getCategory(), 1, Integer::sum);
             }
+        }
 
-            return categoryMatchCount.isEmpty() ? null :
-                    categoryMatchCount.entrySet().stream()
-                            .max(Map.Entry.comparingByValue())
-                            .map(Map.Entry::getKey)
-                            .orElse(null);
+        if (!categoryMatchCount.isEmpty()) {
+            // 返回匹配次数最多的分类
+            return categoryMatchCount.entrySet().stream()
+                    .max(Map.Entry.comparingByValue())
+                    .map(Map.Entry::getKey)
+                    .orElse(null);
         }
-        
-        private String getDefaultCategory(String description) {
-            if (description.contains("salary") || description.contains("paycheck")) return "Salary";
-            if (description.contains("food") || description.contains("eat")) return "Food";
-            if (description.contains("rent") || description.contains("mortgage")) return "Housing";
-            
-            List<String> categories = controller.getUser().getCategories();
-            return categories.isEmpty() ? null : categories.get(0);
+
+        // 3. 如果还是没有匹配，使用默认分类
+        return getDefaultCategory(descLower);
+    }
+
+    // 创建分类关键词映射表
+    private Map<String, List<String>> createCategoryKeywordsMap() {
+        Map<String, List<String>> keywordMap = new HashMap<>();
+
+        // 餐饮相关 Food & Dining
+        //keywordMap.put("餐饮", Arrays.asList("餐厅", "饭店", "外卖", "早餐", "午餐", "晚餐", "小吃", "咖啡", "奶茶", "火锅", "烧烤"));
+        keywordMap.put("Food", Arrays.asList("restaurant", "dining", "takeout", "breakfast", "lunch", "dinner", "snack", "coffee", "bubble tea", "hotpot", "bbq", "food", "eat", "meal"));
+
+        // 交通相关 Transportation
+        //keywordMap.put("交通", Arrays.asList("打车", "公交", "地铁", "火车", "高铁", "机票", "出租车", "滴滴", "加油", "停车"));
+        keywordMap.put("Transportation", Arrays.asList("taxi", "bus", "subway", "train",
+                "flight", "plane", "gas", "parking",
+                "uber", "lyft", "transport", "commute"));
+        // 购物相关 Shopping
+        //keywordMap.put("购物", Arrays.asList("商场", "超市", "网购", "淘宝", "亚马逊", "衣服", "鞋子", "电器", "日用品"));
+        keywordMap.put("Shopping", Arrays.asList("mall", "supermarket", "online", "taobao", "amazon", "clothes", "shoes", "electronics", "groceries", "purchase", "buy"));
+
+        // 房租相关 Housing
+        //keywordMap.put("房租", Arrays.asList("房租", "水电", "物业", "房贷", "租金"));
+        keywordMap.put("Housing", Arrays.asList("rent", "utilities", "mortgage", "electricity", "water", "property", "housing", "apartment"));
+
+        // 娱乐相关 Entertainment
+        //keywordMap.put("娱乐", Arrays.asList("电影", "ktv", "游戏", "游乐场", "演唱会", "门票", "旅游", "度假"));
+        keywordMap.put("Entertainment", Arrays.asList("movie", "cinema", "karaoke", "game", "amusement", "concert", "ticket", "travel", "vacation", "netflix", "spotify"));
+
+        // 工资收入 Income/Salary
+        //keywordMap.put("工资", Arrays.asList("工资", "薪水", "薪资", "奖金", "绩效"));
+        keywordMap.put("Salary", Arrays.asList("salary", "paycheck", "income", "bonus", "payment", "wage", "earnings"));
+
+        // Education
+        keywordMap.put("Education", Arrays.asList("school", "tuition", "book", "course", "learning", "education", "student"));
+
+        // Other common categories
+        keywordMap.put("Gifts", Arrays.asList("gift", "donation", "present", "charity"));
+        keywordMap.put("Investments", Arrays.asList("stock", "investment", "fund", "savings"));
+        keywordMap.put("Personal Care", Arrays.asList("haircut", "spa", "beauty", "cosmetics"));
+
+        return keywordMap;
+    }
+
+    // 获取默认分类
+    private String getDefaultCategory(String description) {
+        // 这里可以根据描述中的关键词返回更合适的默认分类
+        if (description.contains("salary") || description.contains("paycheck")) {
+            return "Salary";
         }
-        
-        private static Map<String, List<String>> createKeywordMap() {
-            Map<String, List<String>> map = new HashMap<>();
-            
-            map.put("Food", Arrays.asList("restaurant", "dining", "takeout", "breakfast", 
-                "lunch", "dinner", "snack", "coffee", "bubble tea", "hotpot", "bbq", "food", "eat", "meal"));
-            
-            map.put("Transportation", Arrays.asList("taxi", "bus", "subway", "train",
-                "flight", "plane", "gas", "parking", "uber", "lyft", "transport", "commute"));
-                
-            map.put("Shopping", Arrays.asList("mall", "supermarket", "online", "taobao", 
-                "amazon", "clothes", "shoes", "electronics", "groceries", "purchase", "buy"));
-                
-            map.put("Housing", Arrays.asList("rent", "utilities", "mortgage", "electricity", 
-                "water", "property", "housing", "apartment"));
-                
-            map.put("Entertainment", Arrays.asList("movie", "cinema", "karaoke", "game", 
-                "amusement", "concert", "ticket", "travel", "vacation", "netflix", "spotify"));
-                
-            map.put("Salary", Arrays.asList("salary", "paycheck", "income", "bonus", 
-                "payment", "wage", "earnings"));
-                
-            map.put("Education", Arrays.asList("school", "tuition", "book", "course", 
-                "learning", "education", "student"));
-                
-            map.put("Gifts", Arrays.asList("gift", "donation", "present", "charity"));
-            map.put("Investments", Arrays.asList("stock", "investment", "fund", "savings"));
-            map.put("Personal Care", Arrays.asList("haircut", "spa", "beauty", "cosmetics"));
-            
-            return map;
+        if (description.contains("food") || description.contains("eat")) {
+            return "Food";
         }
+        if (description.contains("rent") || description.contains("mortgage")) {
+            return "Housing";
+        }
+        // 默认返回第一个分类
+        List<String> categories = controller.getUser().getCategories();
+        return categories.isEmpty() ? null : categories.get(0);
     }
 }
