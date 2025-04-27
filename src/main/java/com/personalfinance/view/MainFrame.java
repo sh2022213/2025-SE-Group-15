@@ -5,6 +5,7 @@ import com.personalfinance.controller.FinanceController;
 import com.personalfinance.view.panel.DashboardPanel;
 import com.personalfinance.view.panel.TransactionPanel;
 import com.personalfinance.view.panel.UserProfilePanel;
+import com.personalfinance.view.panel.AnalysisPanel;
 
 import javax.swing.*;
 
@@ -12,6 +13,8 @@ public class MainFrame extends JFrame {
     private final FinanceController controller;
     private DashboardPanel dashboardPanel;
     private TransactionPanel transactionPanel;
+    private AnalysisPanel analysisPanel;
+
 
     public MainFrame(FinanceController controller) {
         this.controller = controller;
@@ -34,14 +37,19 @@ public class MainFrame extends JFrame {
         // 初始化面板时保留引用
         dashboardPanel = new DashboardPanel(controller);
         transactionPanel = new TransactionPanel(controller);
+        analysisPanel = new AnalysisPanel(controller);
 
         tabbedPane.addTab("Dashboard", dashboardPanel);
         tabbedPane.addTab("Transaction Record", transactionPanel);
+        tabbedPane.addTab("Financial Analysis", analysisPanel);
 
         // 添加选项卡切换监听
         tabbedPane.addChangeListener(e -> {
             if (tabbedPane.getSelectedComponent() == dashboardPanel) {
                 dashboardPanel.refreshData(); // 切换到仪表盘时刷新
+            }
+            if (tabbedPane.getSelectedComponent() == analysisPanel) {
+                analysisPanel.refreshData(); // 切换到分析页时刷新
             }
         });
 
@@ -110,5 +118,6 @@ public class MainFrame extends JFrame {
     // 提供刷新所有面板的方法
     public void refreshAll() {
         dashboardPanel.refreshData();
+        analysisPanel.refreshData();
     }
 }
