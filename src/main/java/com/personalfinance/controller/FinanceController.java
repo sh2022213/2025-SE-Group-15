@@ -54,30 +54,36 @@ public class FinanceController {
     }
 
     private void initializeDefaultData() {
+        if (transactions == null) {
+            transactions = new ArrayList<>();
+        }
+        if (budgets == null) {
+            budgets = new ArrayList<>();
+        }
         // 如果没有任何交易记录，初始化一些示例数据
         if (transactions.isEmpty()) {
-            Calendar cal = Calendar.getInstance();
+            // Calendar cal = Calendar.getInstance();
 
-            // 添加示例收入
-            transactions.add(new Transaction(
-                    new BigDecimal("15000.00"),
-                    "Salary",
-                    "INCOME",
-                    cal.getTime(),
-                    "monthly pay"
-            ));
+            // // 添加示例收入
+            // transactions.add(new Transaction(
+            //         new BigDecimal("15000.00"),
+            //         "Salary",
+            //         "INCOME",
+            //         cal.getTime(),
+            //         "monthly pay"
+            // ));
 
-            // 添加示例支出
-            cal.add(Calendar.DATE, -5);
-            transactions.add(new Transaction(
-                    new BigDecimal("2500.00"),
-                    "Housing",
-                    "EXPENSE",
-                    cal.getTime(),
-                    "Rent for November"
-            ));
+            // // 添加示例支出
+            // cal.add(Calendar.DATE, -5);
+            // transactions.add(new Transaction(
+            //         new BigDecimal("2500.00"),
+            //         "Housing",
+            //         "EXPENSE",
+            //         cal.getTime(),
+            //         "Rent for November"
+            // ));
 
-            saveTransactions();
+            // saveTransactions();
         }
 
         // 如果没有预算数据，初始化默认预算
@@ -330,4 +336,5 @@ public class FinanceController {
         return true;
     }
 
-}
+
+    }
