@@ -20,7 +20,7 @@ public class AIAnalyzer {
     public AIAnalyzer(FinanceController controller) {
         this.controller = controller;
     }
-
+ 
     /** 
      * 获取消费习惯分析报告
      */
