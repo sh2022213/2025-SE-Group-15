@@ -8,8 +8,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.stream.Collectors;
-
+import java.util.stream.Collectors  ;    
+    
 /**
  * AI财务分析引擎
  */
@@ -21,7 +21,7 @@ public class AIAnalyzer {
         this.controller = controller;
     }
 
-    /**
+    /** 
      * 获取消费习惯分析报告
      */
     public String getSpendingHabitsReport() {
