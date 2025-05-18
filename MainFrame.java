@@ -2,10 +2,10 @@ package com.personalfinance.view;
 
 import com.personalfinance.MainSystem;
 import com.personalfinance.controller.FinanceController;
+import com.personalfinance.view.panel.AnalysisPanel;
 import com.personalfinance.view.panel.DashboardPanel;
 import com.personalfinance.view.panel.TransactionPanel;
 import com.personalfinance.view.panel.UserProfilePanel;
-import com.personalfinance.view.panel.AnalysisPanel;
 
 import javax.swing.*;
 
