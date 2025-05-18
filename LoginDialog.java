@@ -86,7 +86,8 @@ public class LoginDialog extends JDialog {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
 
-            if (authenticate(username, password)) {
+            //if (authenticate(username, password)) {
+            if (controller.loginUser(username, password)) {
                 authenticated = true;
                 dispose();
             } else {
@@ -110,9 +111,8 @@ public class LoginDialog extends JDialog {
         // 按钮面板
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
         buttonPanel.add(loginButton);
-        if (controller.getUser() == null || controller.getUser().getUsername() == null) {
-            buttonPanel.add(registerButton);
-        }
+        buttonPanel.add(registerButton);
+
         gbc.gridx = 0; gbc.gridy = 3;
         gbc.gridwidth = 2;
         panel.add(buttonPanel, gbc);
@@ -241,3 +241,4 @@ public class LoginDialog extends JDialog {
         return authenticated;
     }
 }
+
