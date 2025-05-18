@@ -1,0 +1,56 @@
+[
+  {
+    "id": "ddb49be2-2a59-4d45-9116-4f47bc414957",
+    "amount": 54.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-05-03",
+    "description": "clothing",
+    "isRecurring": false
+  },
+  {
+    "id": "fe3e258c-2dfe-4542-86a3-cc42b2317775",
+    "amount": 4.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-05-03",
+    "description": "clothing",
+    "isRecurring": false
+  },
+  {
+    "id": "04e97df5-0f65-4c53-a0d6-cf84e422dfc6",
+    "amount": 4.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-05-02",
+    "description": "clothing",
+    "isRecurring": false
+  },
+  {
+    "id": "1cbf3edf-9ab4-499f-8916-011b71477d6d",
+    "amount": 12.0,
+    "category": "Shopping",
+    "type": "EXPENSE",
+    "date": "2025-05-03",
+    "description": "clothing",
+    "isRecurring": false
+  },
+  {
+    "id": "c506aa8c-0c75-4bcb-94c5-d4edc9407835",
+    "amount": 200.0,
+    "category": "Shopping",
+    "type": "INCOME",
+    "date": "2025-05-01",
+    "description": "taobao",
+    "isRecurring": false
+  },
+  {
+    "id": "ad5c2283-e270-475e-8312-d3fa1d8a1ddd",
+    "amount": 200.0,
+    "category": "Shopping",
+    "type": "EXPENSE",
+    "date": "2025-05-01",
+    "description": "taobao",
+    "isRecurring": false
+  }
+]
