@@ -1,0 +1,53 @@
+[
+  {
+    "username": "admin",
+    "passwordHash": "5666fa60",
+    "avatarPath": "avatars/default-avatar.png",
+    "categories": [
+      "Food",
+      "Transportation",
+      "Shopping",
+      "Housing",
+      "Entertainment",
+      "Salary",
+      "Health",
+      "Education",
+      "Gifts"
+    ],
+    "currency": "CNY"
+  },
+  {
+    "username": "test",
+    "passwordHash": "5666fa60",
+    "avatarPath": "avatars/default-avatar.png",
+    "categories": [
+      "Food",
+      "Transportation",
+      "Shopping",
+      "Housing",
+      "Entertainment",
+      "Salary",
+      "Health",
+      "Education",
+      "Gifts"
+    ],
+    "currency": "CNY"
+  },
+  {
+    "username": "gjz",
+    "passwordHash": "5666fa60",
+    "avatarPath": "avatars/default-avatar.png",
+    "categories": [
+      "Food",
+      "Transportation",
+      "Shopping",
+      "Housing",
+      "Entertainment",
+      "Salary",
+      "Health",
+      "Education",
+      "Gifts"
+    ],
+    "currency": "CNY"
+  }
+]
