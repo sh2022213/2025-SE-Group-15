@@ -1,0 +1,91 @@
+[
+  {
+    "id": "fb8ef762-2383-452e-8c6e-52cbd1467411",
+    "amount": 20000.0,
+    "category": "Salary",
+    "type": "INCOME",
+    "date": "2025-04-26",
+    "description": "salary",
+    "isRecurring": false
+  },
+  {
+    "id": "6ea46897-e743-466a-8063-7d2a87632725",
+    "amount": 10000.0,
+    "category": "Food",
+    "type": "INCOME",
+    "date": "2025-04-26",
+    "description": "fund",
+    "isRecurring": false
+  },
+  {
+    "id": "855ae1a6-35aa-4c4e-a6d5-106ccfddb2df",
+    "amount": 10000.0,
+    "category": "Shopping",
+    "type": "EXPENSE",
+    "date": "2025-04-26",
+    "description": "taobao",
+    "isRecurring": false
+  },
+  {
+    "id": "17cdd5c9-a7e7-46df-b6d9-d66515d69231",
+    "amount": 200.0,
+    "category": "Shopping",
+    "type": "EXPENSE",
+    "date": "2025-05-03",
+    "description": "taobao",
+    "isRecurring": false
+  },
+  {
+    "id": "3b828408-6e8c-476d-90e2-3784a68e569a",
+    "amount": 500.0,
+    "category": "Transportation",
+    "type": "EXPENSE",
+    "date": "2025-05-04",
+    "description": "bus",
+    "isRecurring": false
+  },
+  {
+    "id": "5ef74bfa-c77d-44d5-96c2-3c4d59745f81",
+    "amount": 521.0,
+    "category": "Education",
+    "type": "EXPENSE",
+    "date": "2025-05-15",
+    "description": "book",
+    "isRecurring": false
+  },
+  {
+    "id": "85971710-4703-4314-991c-2cc62aa0a015",
+    "amount": 12.0,
+    "category": "Shopping",
+    "type": "EXPENSE",
+    "date": "2025-05-03",
+    "description": "taobao",
+    "isRecurring": false
+  },
+  {
+    "id": "a4ed19f7-b604-4bac-9698-60627b0002cf",
+    "amount": 100.0,
+    "type": "INCOME",
+    "date": "2025-02-03",
+    "description": "",
+    "isRecurring": false
+  },
+  {
+    "id": "da512346-51cd-48cd-820b-52dcf66ac014",
+    "amount": 100.0,
+    "category": "Shopping",
+    "type": "EXPENSE",
+    "date": "2025-02-03",
+    "description": "taobao",
+    "isRecurring": false
+  },
+  {
+    "id": "7ad8c4c0-e52c-4999-a857-919a72deef85",
+    "amount": 9999.0,
+    "category": "Shopping",
+    "type": "EXPENSE",
+    "date": "2025-06-01",
+    "description": "taobao",
+    "isRecurring": false
+  }
+]

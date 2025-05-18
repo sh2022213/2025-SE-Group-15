@@ -1,11 +1,37 @@
 [
   {
+    "id": "6b4aff58-e3d6-4835-a87a-f22a0395dd18",
+    "amount": 15000.00,
+    "category": "Salary",
+    "type": "INCOME",
+    "date": "2025-04-07",
+    "description": "Monthly salary",
+    "isRecurring": false
+  },  {
+    "id": "15ead2a3-82bf-491b-87ea-3bfe9e423dbf",
+    "amount": 2500.00,
+    "category": "Housing",
+    "type": "EXPENSE",
+    "date": "2025-02-02",
+    "description": "Rent for February",
+    "isRecurring": false
+  },
+  {
     "id": "6f82281a-851e-444b-84a8-78a7c4996911",
     "amount": 20000.0,
     "category": "Transportation",
     "type": "INCOME",
     "date": "2025-04-08",
     "description": "Transportation subsidy",
+    "isRecurring": false
+  },
+  {
+    "id": "fecee60d-cf0b-4a04-a247-a3619e916275",
+    "amount": 10000.0,
+    "category": "Entertainment",
+    "type": "EXPENSE",
+    "date": "2025-04-08",
+    "description": "Entertainment",
     "isRecurring": false
   },
   {
@@ -141,23 +167,6 @@
     "type": "INCOME",
     "date": "2025-01-14",
     "description": "Monthly salary",
-    "isRecurring": false
-  },
-  {
-    "id": "6ba1ee8a-0f99-4c1c-b842-30a8bb6b3e04",
-    "amount": 0.0,
-    "type": "INCOME",
-    "date": "2025-04-17",
-    "description": "",
-    "isRecurring": false
-  },
-  {
-    "id": "d26d6ab1-1f87-448b-bc14-a60134729ac9",
-    "amount": 10.0,
-    "category": "Education",
-    "type": "INCOME",
-    "date": "2025-04-17",
-    "description": "book",
     "isRecurring": false
   }
 ]
