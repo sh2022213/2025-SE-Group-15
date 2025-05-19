@@ -30,9 +30,8 @@ public class Transaction {
         this.date = new Date();
     }
 
-    /** 
+    /**
      * 全参数构造函数
-     * 用于快速创建完整交易记录
      */
     public Transaction(BigDecimal amount, String category, String type,
                        Date date, String description) {
@@ -43,7 +42,7 @@ public class Transaction {
         this.date = date;
         this.description = description;
     }
-    // 属性访问器方法（Getters/Setters）
+
     // Getters and Setters
     public String getId() {
         return id;
@@ -69,15 +68,10 @@ public class Transaction {
         this.category = category;
     }
 
-
-    
     public String getType() {
         return type;
     }
-     /** 
-     * 设置交易类型（包含有效性校验）
-     * throws IllegalArgumentException 当类型非法时抛出异常
-     */
+
     public void setType(String type) {
         if (!TYPE_INCOME.equals(type) && !TYPE_EXPENSE.equals(type)) {
             throw new IllegalArgumentException("Invalid transaction type: " + type);
@@ -121,11 +115,6 @@ public class Transaction {
     /**
      * 获取带符号的金额（支出为负数）
      */
-
-    /** 
-     * 获取带符号金额（支出为负数）
-     * return 根据交易类型返回正/负金额
-     */
     public BigDecimal getSignedAmount() {
         return TYPE_EXPENSE.equals(type) ? amount.negate() : amount;
     }
@@ -143,11 +132,8 @@ public class Transaction {
     public boolean isExpense() {
         return TYPE_EXPENSE.equals(type);
     }
-    
 
-    /** 
-     * 重写equals方法（基于唯一ID判断对象相等性）
-     */
+    // 重写方法
     @Override
     public boolean equals(Object o) {
         if (this == o) {return true;}
@@ -155,15 +141,12 @@ public class Transaction {
         Transaction that = (Transaction) o;
         return Objects.equals(id, that.id);
     }
-    
-    //重写hashCode方法（基于ID生成哈希码）
+
     @Override
     public int hashCode() {
         return Objects.hash(id);
     }
-    
 
-    //重写toString方法（展示关键字段）
     @Override
     public String toString() {
         return "Transaction{" +
@@ -180,7 +163,7 @@ public class Transaction {
     public static Builder builder() {
         return new Builder();
     }
-    //Builder内部类（支持链式调用创建对象）
+
     public static final class Builder {
         private String id;
         private BigDecimal amount;
@@ -191,13 +174,13 @@ public class Transaction {
         private String account;
         private boolean isRecurring;
 
-        private Builder() {}// 私有构造函数
+        private Builder() {}
 
         public Builder id(String id) {
             this.id = id;
             return this;
         }
-        // 链式调用方法
+
         public Builder amount(BigDecimal amount) {
             this.amount = amount;
             return this;
@@ -232,9 +215,7 @@ public class Transaction {
             this.isRecurring = isRecurring;
             return this;
         }
-         /**
-         * 构建Transaction对象
-         */
+
         public Transaction build() {
             Transaction transaction = new Transaction();
             transaction.setId(id);
@@ -248,7 +229,4 @@ public class Transaction {
             return transaction;
         }
     }
-    
 }
-
-
