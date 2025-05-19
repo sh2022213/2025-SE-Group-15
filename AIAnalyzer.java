@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * AI财务分析引擎
+ * AI财务分析引擎    
  */
 public class AIAnalyzer {
     private static final int RECENT_MONTHS = 6; // 分析最近6个月数据
