@@ -520,7 +520,7 @@ public class AIAnalyzer {
         return new HolidaySpending(average, holidaySpending.size(), increasePercentage);
     }
 
-    // 辅助方法
+    // 辅助方法    
     private boolean isHoliday(Date date, Set<LocalDate> holidays) {
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         return holidays.contains(localDate);
