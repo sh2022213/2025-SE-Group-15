@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * AI财务分析引擎
+ * AI financial analysis engine    
  */
 public class AIAnalyzer {
     private static final int RECENT_MONTHS = 6; // 分析最近6个月数据
@@ -22,7 +22,7 @@ public class AIAnalyzer {
     }
 
     /**
-     * 获取消费习惯分析报告
+     * Obtain the consumption habit analysis report
      */
     public String getSpendingHabitsReport() {
         List<Transaction> transactions = controller.getTransactions();
@@ -33,7 +33,7 @@ public class AIAnalyzer {
         StringBuilder report = new StringBuilder();
         report.append("=== Consumer Habit Analysis Report ===\n\n");
 
-        // 1. 主要消费分类
+        // 1. Main consumption categories
         report.append("1. Main consumption categories:\n");
             Map<String, BigDecimal> categorySpending = getCategorySpending(transactions);
         categorySpending.entrySet().stream()
@@ -47,7 +47,7 @@ public class AIAnalyzer {
                 });
         report.append("\n");
 
-        // 2. 新增节假日消费分析
+        // 2. New analysis of holiday consumption
         report.append("2. Analysis of holiday consumption:\n");
         Map<String, HolidaySpending> holidayAnalysis = analyzeHolidaySpending(transactions);
         if (holidayAnalysis.isEmpty()) {
@@ -62,7 +62,7 @@ public class AIAnalyzer {
         }
         report.append("\n");
 
-        // 3. 月度消费趋势
+        // 3. Monthly consumption trend
         report.append("3. Monthly consumption trend:\n");
         Map<String, BigDecimal> monthlyTrend = getMonthlyTrend(transactions);
         monthlyTrend.forEach((month, amount) -> {
@@ -70,7 +70,7 @@ public class AIAnalyzer {
         });
         report.append("\n");
 
-        // 4. 异常消费检测
+        // 4. Abnormal consumption detection
         report.append("4. Abnormal consumption detection:\n");
         detectAnomalies(transactions).forEach(anomaly -> {
             report.append(String.format(" - [Exception] %s: %s (%s)\n",
@@ -84,7 +84,7 @@ public class AIAnalyzer {
         }
         report.append("\n");
 
-        // 5. 预算执行情况
+        // 5. budget performance
         report.append("5. Budget recommendations:\n");
         generateBudgetAdvice().forEach(advice -> {
             report.append(String.format(" - %s\n", advice));
@@ -94,7 +94,7 @@ public class AIAnalyzer {
     }
 
     /**
-     * 检测异常消费（超过平均值的2倍标准差）
+     * Detect abnormal consumption (more than twice the standard deviation above the average value)
      */
     public List<Map<String, String>> detectAnomalies(List<Transaction> transactions) {
         List<Transaction> expenses = transactions.stream()
@@ -103,11 +103,11 @@ public class AIAnalyzer {
 
         if (expenses.isEmpty()) { return Collections.emptyList(); }
 
-        // 计算平均值和标准差
+        // Calculate the average value and the standard deviation
         BigDecimal average = getAverageSpending(expenses);
         BigDecimal stdDev = calculateStandardDeviation(expenses, average);
 
-        // 检测异常（平均值 + 2倍标准差）
+        // Detecting anomalies (average value + 2 times standard deviation)
         BigDecimal threshold = average.add(stdDev.multiply(new BigDecimal(2)));
 
         return expenses.stream()
@@ -125,14 +125,14 @@ public class AIAnalyzer {
     }
 
     /**
-     * 生成预算优化建议
+     * Generate budget optimization suggestions
      */
     public List<String> generateBudgetAdvice() {
         List<String> advice = new ArrayList<>();
         BigDecimal totalIncome = getTotalIncome();
         BigDecimal totalSpending = getTotalSpending(controller.getTransactions());
 
-        // 储蓄率分析
+        // Analysis of Savings Rate
         BigDecimal savingsRate = totalIncome.compareTo(BigDecimal.ZERO) > 0 ?
                 totalIncome.subtract(totalSpending).divide(totalIncome, 4, RoundingMode.HALF_UP) :
                 BigDecimal.ZERO;
@@ -143,7 +143,7 @@ public class AIAnalyzer {
             advice.add("The current savings rate is good(" + formatPercentage(savingsRate) + ")，Continue to maintain");
         }
 
-        // 分类支出建议
+        // Proposed classification of expenditures
         getCategorySpending(controller.getTransactions()).entrySet().stream()
                 .sorted(Map.Entry.<String, BigDecimal>comparingByValue().reversed())
                 .limit(3)
@@ -154,7 +154,7 @@ public class AIAnalyzer {
                     );
                 });
 
-        // 月度波动建议
+        // Monthly fluctuations suggestion
         if (hasSignificantMonthlyVariation()) {
             advice.add("Detected significant fluctuations in monthly expenses, it is recommended to balance monthly consumption!");
         }
@@ -163,12 +163,12 @@ public class AIAnalyzer {
     }
 
     /**
-     * 获取未来3个月支出预测
+     * Obtain the expenditure forecast for the next three months
      */
     public Map<String, BigDecimal> getSpendingForecast() {
         Map<String, BigDecimal> monthlyTrend = getMonthlyTrend(controller.getTransactions());
 
-        // 简单预测：取最近3个月平均值
+        // Simple prediction: Take the average value of the last 3 months
         BigDecimal avgLast3Months = monthlyTrend.values().stream()
                 .limit(3)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
@@ -184,7 +184,7 @@ public class AIAnalyzer {
         return forecast;
     }
 
-    // ========== 辅助方法 ==========
+    // ========== aiding method ==========
 
     private Map<String, BigDecimal> getCategorySpending(List<Transaction> transactions) {
         return transactions.stream()
@@ -292,22 +292,22 @@ public class AIAnalyzer {
     }
 
     /**
-     * 根据交易描述智能匹配分类
-     * @param description 交易描述
-     * @return 匹配到的分类，如果无法匹配则返回null
+     * Match categories based on the transaction description
+     * @param description 
+     * @return The matched category. If no match is found, return null.
      */
     public String matchCategory(String description) {
         if (description == null || description.trim().isEmpty()) {
             return null;
         }
 
-        // 获取所有可用分类
+        // Obtain all available categories
         List<String> categories = controller.getUser().getCategories();
         if (categories.isEmpty()) {
             return null;
         }
 
-        // 转换为小写方便匹配
+        // Convert to lowercase for easier matching
         String descLower = description.toLowerCase();
 
         // 1. 首先检查是否有明确的分类关键词匹配
@@ -345,7 +345,7 @@ public class AIAnalyzer {
         return getDefaultCategory(descLower);
     }
 
-    // 创建分类关键词映射表
+    // Create a mapping table for classification keywords
     private Map<String, List<String>> createCategoryKeywordsMap() {
         Map<String, List<String>> keywordMap = new HashMap<>();
 
@@ -385,7 +385,7 @@ public class AIAnalyzer {
         return keywordMap;
     }
 
-    // 获取默认分类
+    // Get the default category
     private String getDefaultCategory(String description) {
         // 这里可以根据描述中的关键词返回更合适的默认分类
         if (description.contains("salary") || description.contains("paycheck")) {
@@ -403,7 +403,7 @@ public class AIAnalyzer {
     }
 
     /**
-     * 分析节假日消费数据
+     * Analyze holiday consumption data
      */
     private Map<String, HolidaySpending> analyzeHolidaySpending(List<Transaction> transactions) {
         Map<String, HolidaySpending> result = new LinkedHashMap<>();
@@ -451,7 +451,7 @@ public class AIAnalyzer {
     }
 
     /**
-     * 计算平常日平均消费（排除节假日）
+     * Calculate the average daily consumption on normal days (excluding holidays)
      */
     private BigDecimal calculateNormalDailyAverage(List<Transaction> transactions,
                                                    Map<String, List<LocalDate>> holidays) {
@@ -492,7 +492,7 @@ public class AIAnalyzer {
     }
 
     /**
-     * 计算特定节假日的消费数据
+     * Calculate the consumption data for specific holidays
      */
     private HolidaySpending calculateHolidaySpending(List<Transaction> transactions,
                                                      LocalDate startDate, LocalDate endDate,
@@ -520,7 +520,7 @@ public class AIAnalyzer {
         return new HolidaySpending(average, holidaySpending.size(), increasePercentage);
     }
 
-    // 辅助方法
+    // 辅助方法    
     private boolean isHoliday(Date date, Set<LocalDate> holidays) {
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         return holidays.contains(localDate);
@@ -532,7 +532,7 @@ public class AIAnalyzer {
     }
 
     /**
-     * 节假日消费数据封装类
+     * Holiday Consumption Data Packaging Class
      */
     private static class HolidaySpending {
         private final BigDecimal averageSpending;
