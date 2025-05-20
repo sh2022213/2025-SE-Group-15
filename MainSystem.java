@@ -32,7 +32,7 @@ public class MainSystem {
 
 
     public void startApplication() {
-        // 重新启动应用
+        // 重新启动
         com.personalfinance.MainSystem.main(new String[]{});
     }
 
