@@ -22,37 +22,20 @@ public class FinanceController {
     public FinanceController() {
         this.aiAnalyzer = new AIAnalyzer(this);
         this.dataManager = new JsonDataManager();
-        loadAllData();
-        initializeDefaultData();
+        //loadAllData();
+        //initializeDefaultData();
+    }
+
+    public String getUserFilePath( String fileName){
+        return dataManager.getUserDataPath(this.user.getUsername(), fileName);
     }
 
     public AIAnalyzer getAIAnalyzer() {
         return aiAnalyzer;
     }
 
-    // 核心数据操作方法
+    // Core data operation methods
     // ==============================================
-
-    private void loadAllData() {
-        // 加载交易记录
-        this.transactions = dataManager.loadCollection(
-                "transactions.json",
-                new TypeToken<List<Transaction>>() {}
-        );
-
-        // 加载预算
-        this.budgets = dataManager.loadCollection(
-                "budgets.json",
-                new TypeToken<List<Budget>>() {}
-        );
-
-        // 加载用户数据
-        this.user = dataManager.load("user.json", User.class);
-        if (this.user == null) {
-            this.user = new User();
-        }
-    }
-
     private void initializeDefaultData() {
         if (transactions == null) {
             transactions = new ArrayList<>();
@@ -60,11 +43,11 @@ public class FinanceController {
         if (budgets == null) {
             budgets = new ArrayList<>();
         }
-        // 如果没有任何交易记录，初始化一些示例数据
+        // If there are no transaction records, initialize some sample data.
         if (transactions.isEmpty()) {
             // Calendar cal = Calendar.getInstance();
 
-            // // 添加示例收入
+            // // Add sample income
             // transactions.add(new Transaction(
             //         new BigDecimal("15000.00"),
             //         "Salary",
@@ -73,7 +56,7 @@ public class FinanceController {
             //         "monthly pay"
             // ));
 
-            // // 添加示例支出
+            // // Add example expenses
             // cal.add(Calendar.DATE, -5);
             // transactions.add(new Transaction(
             //         new BigDecimal("2500.00"),
@@ -86,7 +69,7 @@ public class FinanceController {
             // saveTransactions();
         }
 
-        // 如果没有预算数据，初始化默认预算
+        // If there is no budget data, initialize the default budget.
         if (budgets.isEmpty()) {
             Calendar cal = Calendar.getInstance();
             Date startDate = cal.getTime();
@@ -100,7 +83,7 @@ public class FinanceController {
             saveBudgets();
         }
 
-        // 更新预算的实际支出
+        // Actual expenditure of the updated budget
         updateBudgetSpending();
     }
 
@@ -118,28 +101,28 @@ public class FinanceController {
         });
     }
 
-    // 交易记录相关方法
+    // Transaction record-related methods
     // ==============================================
 
     public void addTransaction(Transaction transaction) {
         transaction.setId(UUID.randomUUID().toString());
         transactions.add(transaction);
-        saveTransactions();
+        saveTransactions(transactions);
         updateBudgetSpending();
     }
 
     public void updateTransaction(Transaction transaction) {
         transactions.removeIf(t -> t.getId().equals(transaction.getId()));
         transactions.add(transaction);
-        saveTransactions();
+        saveTransactions(transactions);
         updateBudgetSpending();
     }
 
     public boolean deleteTransaction(String transactionId) {
         boolean removed = transactions.removeIf(t -> t.getId().equals(transactionId));
         if (removed) {
-            dataManager.save("transactions.json", transactions);
-            saveTransactions();
+            //dataManager.save("transactions.json", transactions,user.getUsername());
+            saveTransactions(transactions);
             updateBudgetSpending();
             return true;
         }
@@ -165,7 +148,7 @@ public class FinanceController {
                 .collect(Collectors.toList());
     }
 
-    // 预算相关方法
+    // Budget-related methods
     // ==============================================
 
     public void addBudget(Budget budget) {
@@ -187,17 +170,17 @@ public class FinanceController {
         saveBudgets();
     }
 
-    // 统计分析相关方法
+    // Statistical analysis methods
     // ==============================================
 
     public Map<String, BigDecimal> getCategorySpending() {
         Map<String, BigDecimal> result = new HashMap<>();
 
-        // 初始化所有分类
+        // Initialize all categories
         user.getCategories().forEach(category ->
                 result.put(category, BigDecimal.ZERO));
 
-        // 计算实际支出
+        // Calculate the actual expenditure
         transactions.stream()
                 .filter(t -> "EXPENSE".equals(t.getType()))
                 .forEach(t -> result.merge(t.getCategory(), t.getAmount(), BigDecimal::add));
@@ -209,7 +192,7 @@ public class FinanceController {
         Map<String, BigDecimal> trend = new LinkedHashMap<>();
         SimpleDateFormat monthFormat = new SimpleDateFormat("yyyy-MM");
 
-        // 初始化最近12个月
+        // Initialize for the last 12 months
         Calendar cal = Calendar.getInstance();
         for (int i = 0; i < 12; i++) {
             String month = monthFormat.format(cal.getTime());
@@ -217,7 +200,7 @@ public class FinanceController {
             cal.add(Calendar.MONTH, -1);
         }
 
-        // 填充实际数据
+        // Fill in the actual data
         transactions.stream()
                 .filter(t -> "EXPENSE".equals(t.getType()))
                 .forEach(t -> {
@@ -273,22 +256,18 @@ public class FinanceController {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    // 数据持久化方法
+    // Data persistence method
     // ==============================================
 
-    public void saveTransactions() {
-        dataManager.save("transactions.json", transactions);
+    public void saveTransactions(List<Transaction> transactions) {
+        dataManager.save("transactions.json", transactions, user.getUsername());
     }
 
     public void saveBudgets() {
-        dataManager.save("budgets.json", budgets);
+        dataManager.save("budgets.json", budgets, user.getUsername());
     }
 
-    public void saveUser() {
-        dataManager.save("user.json", user);
-    }
-
-    // Getter方法
+    // Getter method
     // ==============================================
 
     public List<Transaction> getTransactions() {
@@ -303,27 +282,101 @@ public class FinanceController {
         return user;
     }
 
-    public boolean changePassword(String oldPassword, String newPassword) {
-        if (user.validatePassword(oldPassword)) {
-            user.setPassword(newPassword);
-            saveUser();
-            return true;
+    /**
+     * Change user password
+     * @param username 
+     * @param newPassword 
+     * @return 
+     */
+    public boolean changePassword(String username, String newPassword) {
+        List<User> users = dataManager.loadUsers();
+        if (users == null) {return false;}
+
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                user.setPassword(newPassword);
+                dataManager.saveUsers(users);
+                this.user = user; // Update the current user object
+                return true;
+            }
         }
         return false;
     }
 
     /**
-     * 检查用户名是否存在
+     * Update user information (such as profile picture)
+     * @param updatedUser 
+     * @return Was the update successful?
      */
-    public boolean userExists(String username) {
-        User existingUser = dataManager.load("user.json", User.class);
-        return existingUser != null && existingUser.getUsername().equals(username);
+    public boolean updateUser(User updatedUser) {
+        List<User> users = dataManager.loadUsers();
+        if (users == null) {return false;}
+
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getUsername().equals(updatedUser.getUsername())) {
+                users.set(i, updatedUser);
+                dataManager.saveUsers(users);
+                this.user = updatedUser; // Update the current user object
+                return true;
+            }
+        }
+        return false;
     }
 
+
     /**
-     * 注册新用户
+     * Check if the username exists
+     */
+    public boolean userExists(String username) {
+        List<User> users = dataManager.loadUsers();
+        return users != null && users.stream()
+                .anyMatch(u -> u.getUsername().equals(username));
+    }
+
+    public boolean loginUser(String username, String password) {
+        List<User> users = dataManager.loadUsers();
+        if (users == null) {return false;}
+
+        Optional<User> userOpt = users.stream()
+                .filter(u -> u.getUsername().equals(username))
+                .findFirst();
+
+        if (userOpt.isPresent() && userOpt.get().validatePassword(password)) {
+            this.user = userOpt.get();
+            loadAllData(); // Load the data of this user
+            return true;
+        }
+        return false;
+    }
+
+    public User getLoginUser(){
+        return this.user;
+    }
+
+    private void loadAllData() {
+        if (user == null){ return;}
+        // Load transaction records
+        this.transactions = dataManager.loadCollection(
+                "transactions.json",
+                new TypeToken<List<Transaction>>() {},user.getUsername()
+        );
+
+        // Load budget
+        this.budgets = dataManager.loadCollection(
+                "budgets.json",
+                new TypeToken<List<Budget>>() {},user.getUsername()
+        );
+        initializeDefaultData();
+    }
+    /**
+     * Register a new user
      */
     public boolean registerUser(String username, String password) {
+        List<User> users = dataManager.loadUsers();
+        if (users == null) {
+            users = new ArrayList<>();
+        }
+
         if (userExists(username)) {
             return false;
         }
@@ -331,10 +384,17 @@ public class FinanceController {
         User newUser = new User();
         newUser.setUsername(username);
         newUser.setPassword(password);
-        dataManager.save("user.json", newUser);
+
+
+        users.add(newUser);
+        dataManager.saveUsers(users);
+
+        // Initialize the user data directory
+        dataManager.save("transactions.json", new ArrayList<Transaction>(), username);
+        dataManager.save("budgets.json", new ArrayList<Budget>(), username);
+
         this.user = newUser;
         return true;
     }
 
-
-    }
+}
