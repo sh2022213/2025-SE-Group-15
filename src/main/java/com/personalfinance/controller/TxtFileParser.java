@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-// Implement a parser for txt files
+// 实现 txt 文件解析器
 public class TxtFileParser implements FileParser {
     private final FinanceController controller;
 
