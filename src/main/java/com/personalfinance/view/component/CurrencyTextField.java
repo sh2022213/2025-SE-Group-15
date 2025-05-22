@@ -1,7 +1,7 @@
-// 包声明
+// Package declaration
 package com.personalfinance.view.component;
 
-// 导入必要的类
+// Required imports
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;
 import java.math.BigDecimal;
@@ -9,66 +9,75 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 
 /**
- * 自定义货币输入文本框，提供格式化的货币金额输入功能。
- * 支持 BigDecimal 类型金额的获取和设置，并确保输入值的有效性。
+ * A custom formatted text field for currency input.
+ * <p>
+ * This component supports decimal input formatted to two decimal places,
+ * disallows invalid values, and provides convenient methods to get and set
+ * the amount as {@link BigDecimal}.
  */
 public class CurrencyTextField extends JFormattedTextField {
-    // 数字格式化器，用于统一显示和解析货币金额
+    // Number formatter to control display and parsing of currency values
     private final NumberFormat format;
 
     /**
-     * 构造函数，初始化货币文本框的格式和默认设置
+     * Constructs a new CurrencyTextField with default formatting.
+     * <p>
+     * The field displays numbers with two decimal places, right-aligned,
+     * with a default value of 0.00. Invalid input is disallowed.
      */
     public CurrencyTextField() {
-        // 初始化数字格式（保留2位小数）
+        // Configure number format to 2 decimal places
         format = NumberFormat.getNumberInstance();
         format.setMinimumFractionDigits(2);
         format.setMaximumFractionDigits(2);
 
-        // 配置格式化器（不允许无效输入，最小值为0）
+        // Create a number formatter with input restrictions
         NumberFormatter formatter = new NumberFormatter(format);
-        formatter.setAllowsInvalid(false);
-        formatter.setMinimum(0.0);
+        formatter.setAllowsInvalid(false); // Disallow letters or invalid symbols
+        formatter.setMinimum(0.0);         // Disallow negative values
 
-        // 应用格式化器到文本框
+        // Apply the formatter to this text field
         setFormatter(formatter);
-        
-        // 设置UI属性
-        setColumns(10);  // 默认显示10个字符宽度
-        setHorizontalAlignment(SwingConstants.RIGHT);  // 文本右对齐
-        setValue(BigDecimal.ZERO);  // 默认值为0
+
+        // UI properties
+        setColumns(10);                              // Set preferred column width
+        setHorizontalAlignment(SwingConstants.RIGHT); // Right-align the text
+        setValue(BigDecimal.ZERO);                   // Set default value to 0.00
     }
 
     /**
-     * 获取当前输入的金额（BigDecimal类型）
-     * @return 当前金额，解析失败时返回 BigDecimal.ZERO
-     * @throws ParseException 当文本内容无法解析为数字时抛出
+     * Returns the current amount entered in the text field as a BigDecimal.
+     *
+     * @return the current amount, or BigDecimal.ZERO if parsing fails
+     * @throws ParseException if the current input cannot be parsed
      */
     public BigDecimal getAmount() throws ParseException {
         Object value = getValue();
-        return (value instanceof Number) 
-                ? BigDecimal.valueOf(((Number) value).doubleValue()) 
+        return (value instanceof Number)
+                ? BigDecimal.valueOf(((Number) value).doubleValue())
                 : BigDecimal.ZERO;
     }
 
     /**
-     * 设置显示的金额
-     * @param amount 要设置的金额（BigDecimal类型）
+     * Sets the amount displayed in the text field.
+     *
+     * @param amount the BigDecimal value to display; if null, sets to 0.00
      */
     public void setAmount(BigDecimal amount) {
         setValue(amount != null ? amount : BigDecimal.ZERO);
     }
 
     /**
-     * 重写设置值方法，确保BigDecimal类型的正确处理
-     * @param value 要设置的值
+     * Overrides the default setValue to ensure BigDecimal is properly handled.
+     *
+     * @param value the value to set; can be BigDecimal or any other supported type
      */
     @Override
     public void setValue(Object value) {
         if (value instanceof BigDecimal) {
             super.setValue(((BigDecimal) value).doubleValue());
         } else {
-            super.setValue(value); 
+            super.setValue(value);
         }
     }
 }
