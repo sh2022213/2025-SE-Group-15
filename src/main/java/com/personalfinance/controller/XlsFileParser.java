@@ -8,14 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Reserve an interface for parsing xls files
+ * 预留 xls 文件解析器接口
  */
 public class XlsFileParser implements FileParser {
     @Override
     public List<Transaction> parse(File file) throws IOException {
-        // This is the specific implementation for parsing xls files.
-        // Currently, it is just a placeholder. 
-		// The logic needs to be written based on the actual situation.
+        // 这里是解析 xls 文件的具体实现
+        // 目前只是占位，需要根据实际情况编写逻辑
         return new ArrayList<>();
     }
 }

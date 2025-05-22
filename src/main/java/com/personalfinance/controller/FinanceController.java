@@ -34,7 +34,7 @@ public class FinanceController {
         return aiAnalyzer;
     }
 
-    // Core data operation methods
+    // 核心数据操作方法
     // ==============================================
     private void initializeDefaultData() {
         if (transactions == null) {
@@ -43,11 +43,11 @@ public class FinanceController {
         if (budgets == null) {
             budgets = new ArrayList<>();
         }
-        // If there are no transaction records, initialize some sample data.
+        // 如果没有任何交易记录，初始化一些示例数据
         if (transactions.isEmpty()) {
             // Calendar cal = Calendar.getInstance();
 
-            // // Add sample income
+            // // 添加示例收入
             // transactions.add(new Transaction(
             //         new BigDecimal("15000.00"),
             //         "Salary",
@@ -56,7 +56,7 @@ public class FinanceController {
             //         "monthly pay"
             // ));
 
-            // // Add example expenses
+            // // 添加示例支出
             // cal.add(Calendar.DATE, -5);
             // transactions.add(new Transaction(
             //         new BigDecimal("2500.00"),
@@ -69,7 +69,7 @@ public class FinanceController {
             // saveTransactions();
         }
 
-        // If there is no budget data, initialize the default budget.
+        // 如果没有预算数据，初始化默认预算
         if (budgets.isEmpty()) {
             Calendar cal = Calendar.getInstance();
             Date startDate = cal.getTime();
@@ -83,7 +83,7 @@ public class FinanceController {
             saveBudgets();
         }
 
-        // Actual expenditure of the updated budget
+        // 更新预算的实际支出
         updateBudgetSpending();
     }
 
@@ -101,7 +101,7 @@ public class FinanceController {
         });
     }
 
-    // Transaction record-related methods
+    // 交易记录相关方法
     // ==============================================
 
     public void addTransaction(Transaction transaction) {
@@ -148,7 +148,7 @@ public class FinanceController {
                 .collect(Collectors.toList());
     }
 
-    // Budget-related methods
+    // 预算相关方法
     // ==============================================
 
     public void addBudget(Budget budget) {
@@ -170,17 +170,17 @@ public class FinanceController {
         saveBudgets();
     }
 
-    // Statistical analysis methods
+    // 统计分析相关方法
     // ==============================================
 
     public Map<String, BigDecimal> getCategorySpending() {
         Map<String, BigDecimal> result = new HashMap<>();
 
-        // Initialize all categories
+        // 初始化所有分类
         user.getCategories().forEach(category ->
                 result.put(category, BigDecimal.ZERO));
 
-        // Calculate the actual expenditure
+        // 计算实际支出
         transactions.stream()
                 .filter(t -> "EXPENSE".equals(t.getType()))
                 .forEach(t -> result.merge(t.getCategory(), t.getAmount(), BigDecimal::add));
@@ -192,7 +192,7 @@ public class FinanceController {
         Map<String, BigDecimal> trend = new LinkedHashMap<>();
         SimpleDateFormat monthFormat = new SimpleDateFormat("yyyy-MM");
 
-        // Initialize for the last 12 months
+        // 初始化最近12个月
         Calendar cal = Calendar.getInstance();
         for (int i = 0; i < 12; i++) {
             String month = monthFormat.format(cal.getTime());
@@ -200,7 +200,7 @@ public class FinanceController {
             cal.add(Calendar.MONTH, -1);
         }
 
-        // Fill in the actual data
+        // 填充实际数据
         transactions.stream()
                 .filter(t -> "EXPENSE".equals(t.getType()))
                 .forEach(t -> {
@@ -256,7 +256,7 @@ public class FinanceController {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    // Data persistence method
+    // 数据持久化方法
     // ==============================================
 
     public void saveTransactions(List<Transaction> transactions) {
@@ -267,7 +267,7 @@ public class FinanceController {
         dataManager.save("budgets.json", budgets, user.getUsername());
     }
 
-    // Getter method
+    // Getter方法
     // ==============================================
 
     public List<Transaction> getTransactions() {
@@ -283,10 +283,10 @@ public class FinanceController {
     }
 
     /**
-     * Change user password
-     * @param username 
-     * @param newPassword 
-     * @return 
+     * 修改用户密码
+     * @param username 用户名
+     * @param newPassword 新密码
+     * @return 是否修改成功
      */
     public boolean changePassword(String username, String newPassword) {
         List<User> users = dataManager.loadUsers();
@@ -296,7 +296,7 @@ public class FinanceController {
             if (user.getUsername().equals(username)) {
                 user.setPassword(newPassword);
                 dataManager.saveUsers(users);
-                this.user = user; // Update the current user object
+                this.user = user; // 更新当前用户对象
                 return true;
             }
         }
@@ -304,9 +304,9 @@ public class FinanceController {
     }
 
     /**
-     * Update user information (such as profile picture)
-     * @param updatedUser 
-     * @return Was the update successful?
+     * 更新用户信息（如头像）
+     * @param updatedUser 更新后的用户对象
+     * @return 是否更新成功
      */
     public boolean updateUser(User updatedUser) {
         List<User> users = dataManager.loadUsers();
@@ -316,7 +316,7 @@ public class FinanceController {
             if (users.get(i).getUsername().equals(updatedUser.getUsername())) {
                 users.set(i, updatedUser);
                 dataManager.saveUsers(users);
-                this.user = updatedUser; // Update the current user object
+                this.user = updatedUser; // 更新当前用户对象
                 return true;
             }
         }
@@ -325,7 +325,7 @@ public class FinanceController {
 
 
     /**
-     * Check if the username exists
+     * 检查用户名是否存在
      */
     public boolean userExists(String username) {
         List<User> users = dataManager.loadUsers();
@@ -343,7 +343,7 @@ public class FinanceController {
 
         if (userOpt.isPresent() && userOpt.get().validatePassword(password)) {
             this.user = userOpt.get();
-            loadAllData(); // Load the data of this user
+            loadAllData(); // 加载该用户的数据
             return true;
         }
         return false;
@@ -355,13 +355,13 @@ public class FinanceController {
 
     private void loadAllData() {
         if (user == null){ return;}
-        // Load transaction records
+        // 加载交易记录
         this.transactions = dataManager.loadCollection(
                 "transactions.json",
                 new TypeToken<List<Transaction>>() {},user.getUsername()
         );
 
-        // Load budget
+        // 加载预算
         this.budgets = dataManager.loadCollection(
                 "budgets.json",
                 new TypeToken<List<Budget>>() {},user.getUsername()
@@ -369,7 +369,7 @@ public class FinanceController {
         initializeDefaultData();
     }
     /**
-     * Register a new user
+     * 注册新用户
      */
     public boolean registerUser(String username, String password) {
         List<User> users = dataManager.loadUsers();
@@ -389,7 +389,7 @@ public class FinanceController {
         users.add(newUser);
         dataManager.saveUsers(users);
 
-        // Initialize the user data directory
+        // 初始化用户数据目录
         dataManager.save("transactions.json", new ArrayList<Transaction>(), username);
         dataManager.save("budgets.json", new ArrayList<Budget>(), username);
 
