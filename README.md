@@ -70,7 +70,3 @@ We welcome any form of contribution, including but not limited to:
 ## License
 
 This project is licensed under the MIT License. Please see the [LICENSE](LICENSE) file for details.
-
----
-
-If you want, I can also help format it as a ready-to-use Markdown file!
