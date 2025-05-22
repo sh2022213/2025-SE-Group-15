@@ -16,12 +16,17 @@ This is the project of our group in the 2025 Software Engineering course, aiming
 │                   ├── model/
 │                   ├── storage/
 │                   └── view/
+├── avatars/
+├── component/
+├── data/
+├── target/            
 ├── Javadoc/                        
 │   └── index.html      
 ├── manual/                     
 │   └── user_manual.pdf    
 ├── test/       
 ├── LICENSE
+├── pom.xml   
 └── README.md
 ```
 
