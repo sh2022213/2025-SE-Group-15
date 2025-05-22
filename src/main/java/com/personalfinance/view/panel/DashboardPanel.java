@@ -129,7 +129,7 @@ public class DashboardPanel extends JPanel {
     }
 
     private void refreshMetrics() {
-        // 移除旧的指标面板.
+        // 移除旧的指标面板
         Component[] components = getComponents();
         for (Component comp : components) {
             if (comp instanceof JPanel && comp.getBounds().y < 100) { // 简单判断顶部面板

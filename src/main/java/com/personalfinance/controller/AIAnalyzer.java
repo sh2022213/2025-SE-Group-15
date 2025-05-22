@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;   
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -19,7 +19,7 @@ public class AIAnalyzer {
 
     public AIAnalyzer(FinanceController controller) {
         this.controller = controller;
-    } 
+    }
 
     /**
      * 获取消费习惯分析报告
@@ -47,16 +47,31 @@ public class AIAnalyzer {
                 });
         report.append("\n");
 
-        // 2. 月度消费趋势
-        report.append("2. Monthly consumption trend:\n");
+        // 2. 新增节假日消费分析
+        report.append("2. Analysis of holiday consumption:\n");
+        Map<String, HolidaySpending> holidayAnalysis = analyzeHolidaySpending(transactions);
+        if (holidayAnalysis.isEmpty()) {
+            report.append(" - No consumption records detected during holidays\n");
+        } else {
+            holidayAnalysis.forEach((holiday, data) -> {
+                report.append(String.format(" - %speriod: Average consumption %s (Higher than usual %.1f%%)\n",
+                        holiday,
+                        formatMoney(data.getAverageSpending()),
+                        data.getIncreasePercentage()));
+            });
+        }
+        report.append("\n");
+
+        // 3. 月度消费趋势
+        report.append("3. Monthly consumption trend:\n");
         Map<String, BigDecimal> monthlyTrend = getMonthlyTrend(transactions);
         monthlyTrend.forEach((month, amount) -> {
             report.append(String.format(" - %s: %s\n", month, formatMoney(amount)));
         });
         report.append("\n");
 
-        // 3. 异常消费检测
-        report.append("3. Abnormal consumption detection:\n");
+        // 4. 异常消费检测
+        report.append("4. Abnormal consumption detection:\n");
         detectAnomalies(transactions).forEach(anomaly -> {
             report.append(String.format(" - [Exception] %s: %s (%s)\n",
                     anomaly.get("date"),
@@ -69,8 +84,8 @@ public class AIAnalyzer {
         }
         report.append("\n");
 
-        // 4. 预算执行情况
-        report.append("4. Budget recommendations:\n");
+        // 5. 预算执行情况
+        report.append("5. Budget recommendations:\n");
         generateBudgetAdvice().forEach(advice -> {
             report.append(String.format(" - %s\n", advice));
         });
@@ -385,5 +400,155 @@ public class AIAnalyzer {
         // 默认返回第一个分类
         List<String> categories = controller.getUser().getCategories();
         return categories.isEmpty() ? null : categories.get(0);
+    }
+
+    /**
+     * 分析节假日消费数据
+     */
+    private Map<String, HolidaySpending> analyzeHolidaySpending(List<Transaction> transactions) {
+        Map<String, HolidaySpending> result = new LinkedHashMap<>();
+
+        // 定义主要节假日及其日期范围（示例数据，可按需扩展）
+        Map<String, List<LocalDate>> holidays = new HashMap<>();
+
+        List<LocalDate> springFestivalHolidays = new ArrayList<>();
+        springFestivalHolidays.add(LocalDate.of(2025, 1, 28));
+        springFestivalHolidays.add(LocalDate.of(2025, 2, 4));
+        holidays.put("春节", springFestivalHolidays);
+
+        List<LocalDate> nationalDayHolidays = new ArrayList<>();
+        nationalDayHolidays.add(LocalDate.of(2025, 5, 1));
+        nationalDayHolidays.add(LocalDate.of(2025, 5, 5));
+        holidays.put("劳动节", nationalDayHolidays);
+
+        List<LocalDate> ChildrenDay = new ArrayList<>();
+        ChildrenDay.add(LocalDate.of(2025, 6, 1));
+        ChildrenDay.add(LocalDate.of(2025, 6, 1));
+        holidays.put("儿童节", ChildrenDay);
+
+
+        // 计算平常日平均消费
+        BigDecimal normalAverage = calculateNormalDailyAverage(transactions, holidays);
+        if (normalAverage.compareTo(BigDecimal.ZERO) == 0) {
+            return result;
+        }
+
+        // 分析每个节假日的消费
+        for (Map.Entry<String, List<LocalDate>> entry : holidays.entrySet()) {
+            String holidayName = entry.getKey();
+            LocalDate startDate = entry.getValue().get(0);
+            LocalDate endDate = entry.getValue().get(1);
+
+            HolidaySpending holidayData = calculateHolidaySpending(
+                    transactions, startDate, endDate, normalAverage);
+
+            if (holidayData.getTransactionCount() > 0) {
+                result.put(holidayName, holidayData);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * 计算平常日平均消费（排除节假日）
+     */
+    private BigDecimal calculateNormalDailyAverage(List<Transaction> transactions,
+                                                   Map<String, List<LocalDate>> holidays) {
+        // 获取所有节假日日期
+        Set<LocalDate> allHolidayDates = new HashSet<>();
+        holidays.values().forEach(dates -> {
+            LocalDate start = dates.get(0);
+            LocalDate end = dates.get(1);
+            LocalDate current = start;
+            while (!current.isAfter(end)) {
+                allHolidayDates.add(current);
+                current = current.plusDays(1);
+            }
+        });
+
+        // 计算非节假日的消费
+        List<BigDecimal> normalDaySpending = transactions.stream()
+                .filter(t -> t.isExpense())
+                .filter(t -> !isHoliday(t.getDate(), allHolidayDates))
+                .collect(Collectors.groupingBy(
+                        t -> t.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                        Collectors.reducing(
+                                BigDecimal.ZERO,
+                                Transaction::getAmount,
+                                BigDecimal::add
+                        )
+                ))
+                .values().stream()
+                .filter(amount -> amount.compareTo(BigDecimal.ZERO) > 0)
+                .collect(Collectors.toList());
+
+        if (normalDaySpending.isEmpty()) {return BigDecimal.ZERO;}
+
+        BigDecimal total = normalDaySpending.stream()
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return total.divide(new BigDecimal(normalDaySpending.size()), 2, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * 计算特定节假日的消费数据
+     */
+    private HolidaySpending calculateHolidaySpending(List<Transaction> transactions,
+                                                     LocalDate startDate, LocalDate endDate,
+                                                     BigDecimal normalAverage) {
+        List<BigDecimal> holidaySpending = transactions.stream()
+                .filter(t -> t.isExpense())
+                .filter(t -> isDateBetween(t.getDate(), startDate, endDate))
+                .map(Transaction::getAmount)
+                .collect(Collectors.toList());
+
+        if (holidaySpending.isEmpty()) {
+            return new HolidaySpending(BigDecimal.ZERO, 0, normalAverage.doubleValue());
+        }
+
+        BigDecimal total = holidaySpending.stream()
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal average = total.divide(
+                new BigDecimal(holidaySpending.size()), 2, RoundingMode.HALF_UP);
+
+        double increasePercentage = normalAverage.compareTo(BigDecimal.ZERO) > 0 ?
+                average.subtract(normalAverage).divide(normalAverage, 4, RoundingMode.HALF_UP)
+                        .doubleValue() * 100 : 0;
+
+        return new HolidaySpending(average, holidaySpending.size(), increasePercentage);
+    }
+
+    // 辅助方法
+    private boolean isHoliday(Date date, Set<LocalDate> holidays) {
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return holidays.contains(localDate);
+    }
+
+    private boolean isDateBetween(Date date, LocalDate start, LocalDate end) {
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return !localDate.isBefore(start) && !localDate.isAfter(end);
+    }
+
+    /**
+     * 节假日消费数据封装类
+     */
+    private static class HolidaySpending {
+        private final BigDecimal averageSpending;
+        private final int transactionCount;
+        private final double increasePercentage;
+
+        public HolidaySpending(BigDecimal averageSpending, int transactionCount,
+                               double increasePercentage) {
+            this.averageSpending = averageSpending;
+            this.transactionCount = transactionCount;
+            this.increasePercentage = increasePercentage;
+        }
+
+        // getter方法
+        public BigDecimal getAverageSpending() { return averageSpending; }
+        public int getTransactionCount() { return transactionCount; }
+        public double getIncreasePercentage() { return increasePercentage; }
     }
 }

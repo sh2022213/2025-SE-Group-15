@@ -10,6 +10,7 @@ public class User {
     private List<String> categories = Arrays.asList("Food", "Transportation", "Shopping", "Housing", "Entertainment", "Salary", "Health" , "Education" , "Gifts"    );
     private String currency = "CNY";
 
+    public User(){}
     // 验证密码
     public boolean validatePassword(String inputPassword) {
         return this.passwordHash.equals(hashPassword(inputPassword));
@@ -39,8 +40,4 @@ public class User {
 
     public String getCurrency() { return currency; }
     public void setCurrency(String currency) { this.currency = currency; }
-
-
-    
-    
 }

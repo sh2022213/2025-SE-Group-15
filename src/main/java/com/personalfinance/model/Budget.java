@@ -41,7 +41,4 @@ public class Budget {
     public boolean isOverBudget() {
         return spentAmount.compareTo(amount) > 0;
     }
-    
-
-    
 }

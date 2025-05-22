@@ -132,7 +132,6 @@ public class Transaction {
     public boolean isExpense() {
         return TYPE_EXPENSE.equals(type);
     }
-    
 
     // 重写方法
     @Override
@@ -230,7 +229,4 @@ public class Transaction {
             return transaction;
         }
     }
-    
 }
-
-
