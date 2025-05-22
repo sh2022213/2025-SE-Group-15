@@ -111,7 +111,7 @@
         </resources>
     </build>
 
-    <!-- 防止依赖冲突  -->
+    <!-- 防止依赖冲突 -->
     <dependencyManagement>
         <dependencies>
             <dependency>

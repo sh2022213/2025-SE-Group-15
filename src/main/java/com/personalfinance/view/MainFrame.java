@@ -15,6 +15,7 @@ public class MainFrame extends JFrame {
     private TransactionPanel transactionPanel;
     private AnalysisPanel analysisPanel;
 
+
     public MainFrame(FinanceController controller) {
         this.controller = controller;
         initUI();

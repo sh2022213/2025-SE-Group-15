@@ -4,32 +4,35 @@ import javax.swing.*;
 import java.util.List;
 
 /**
- * A custom combo box component for displaying and selecting categories.
- * 
- * This combo box is editable and allows dynamic updating of the category list.
+ * A custom combo box component for displaying and selecting financial categories.
+ * Supports editable entries and dynamic category updates.
  */
 public class CategoryComboBox extends JComboBox<String> {
 
     /**
-     * Constructs a CategoryComboBox with the provided list of category names.
+     * Constructs a CategoryComboBox with the given list of categories.
      *
-     * @param categories the initial list of category strings
+     * @param categories the list of category names to display initially
      */
     public CategoryComboBox(List<String> categories) {
+        // Initialize with the provided categories
         super(new DefaultComboBoxModel<>(categories.toArray(new String[0])));
-        setEditable(true);       // Allow manual text input
-        setSelectedIndex(-1);    // No selection by default
+        
+        // Make the combo box editable and clear any initial selection
+        setEditable(true);
+        setSelectedIndex(-1);  // No initial selection
     }
 
     /**
-     * Updates the combo box with a new list of category names.
-     * 
-     * Clears the existing items and repopulates the list.
+     * Updates the available categories in the combo box.
      *
-     * @param categories the new list of category strings
+     * @param categories the new list of category names to display
      */
     public void updateCategories(List<String> categories) {
+        // Remove all existing items
         removeAllItems();
+        
+        // Add all new categories
         for (String category : categories) {
             addItem(category);
         }

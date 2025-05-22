@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * 自定义日期选择器组件
+ * Custom date picker component.
  */
 public class MyDatePicker extends JPanel {
     private JSpinner         dateSpinner;
@@ -32,22 +32,25 @@ public class MyDatePicker extends JPanel {
         initComponents(initialDate);
     }
 
+    /**
+     * Initializes components of the date picker.
+     */
     private void initComponents(Date initialDate) {
         setLayout(new BorderLayout());
 
-        // 创建日期微调器
+        // Create date spinner
         SpinnerDateModel model = new SpinnerDateModel(
                 initialDate, null, null, Calendar.DAY_OF_MONTH);
         dateSpinner = new JSpinner(model);
         dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner, dateFormat.toPattern()));
         dateSpinner.addChangeListener(e -> firePropertyChange("date", null, getDate()));
 
-        // 创建弹出按钮
+        // Create popup button
         popupButton = new JButton("▼");
         popupButton.setMargin(new Insets(0, 2, 0, 2));
         popupButton.addActionListener(e -> showPopup());
 
-        // 创建月份视图
+        // Create month view
         monthView = new MyMonthView();
         monthView.setSelectionDate(getDate());
         monthView.addMouseListener(new MouseAdapter() {
@@ -61,18 +64,18 @@ public class MyDatePicker extends JPanel {
             }
         });
 
-        // 创建弹出菜单
+        // Create popup menu
         popupMenu = new JPopupMenu();
         popupMenu.add(monthView);
         popupMenu.setPopupSize(new Dimension(300, 200));
 
-        // 添加组件
+        // Add components
         add(dateSpinner, BorderLayout.CENTER);
         add(popupButton, BorderLayout.EAST);
     }
 
     /**
-     * 显示日期选择弹出窗口
+     * Displays the date selection popup.
      */
     private void showPopup() {
         popupMenu.show(this, 0, getHeight());
@@ -80,14 +83,14 @@ public class MyDatePicker extends JPanel {
     }
 
     /**
-     * 获取当前选择的日期
+     * Returns the currently selected date.
      */
     public Date getDate() {
         return ((SpinnerDateModel) dateSpinner.getModel()).getDate();
     }
 
     /**
-     * 设置日期
+     * Sets the selected date.
      */
     public void setDate(Date date) {
         Date oldDate = getDate();
@@ -96,7 +99,7 @@ public class MyDatePicker extends JPanel {
     }
 
     /**
-     * 设置日期格式
+     * Sets the date format.
      */
     public void setFormats(String... dateFormatPatterns) {
         if (dateFormatPatterns != null && dateFormatPatterns.length > 0) {
@@ -107,21 +110,21 @@ public class MyDatePicker extends JPanel {
     }
 
     /**
-     * 添加日期变化监听器
+     * Adds a date change listener.
      */
     public void addDateChangeListener(ChangeListener listener) {
         dateSpinner.addChangeListener(listener);
     }
 
     /**
-     * 移除日期变化监听器
+     * Removes a date change listener.
      */
     public void removeDateChangeListener(ChangeListener listener) {
         dateSpinner.removeChangeListener(listener);
     }
 
     /**
-     * 自定义月份视图组件
+     * Custom month view component.
      */
     private static class MyMonthView extends JPanel {
         private Date     selectionDate;
@@ -139,7 +142,7 @@ public class MyDatePicker extends JPanel {
         }
 
         /**
-         * 更新月份视图
+         * Updates the month view display.
          */
         private void updateMonthView() {
             removeAll();
@@ -149,7 +152,7 @@ public class MyDatePicker extends JPanel {
             cal.set(Calendar.MONTH, currentMonth);
             cal.set(Calendar.DAY_OF_MONTH, 1);
 
-            // 添加星期标题
+            // Add weekday headers
             String[] weekDays = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
             for (String day : weekDays) {
                 JLabel label = new JLabel(day, SwingConstants.CENTER);
@@ -157,16 +160,16 @@ public class MyDatePicker extends JPanel {
                 add(label);
             }
 
-            // 计算当月天数
+            // Calculate number of days in the month
             int firstDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             int daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-            // 填充空白
+            // Fill initial empty slots
             for (int i = 1; i < firstDayOfWeek; i++) {
                 add(new JLabel(""));
             }
 
-            // 添加日期按钮
+            // Add date buttons
             monthDays = new Date[6][7];
             int week = 0;
             for (int day = 1; day <= daysInMonth; day++) {
@@ -178,12 +181,12 @@ public class MyDatePicker extends JPanel {
                 dayButton.setMargin(new Insets(1, 1, 1, 1));
                 dayButton.addActionListener(e -> setSelectionDate(date));
 
-                // 高亮当前选择日期
+                // Highlight selected date
                 if (selectionDate != null && isSameDay(date, selectionDate)) {
                     dayButton.setBackground(new Color(200, 200, 255));
                 }
 
-                // 高亮今天
+                // Highlight today's date
                 if (isSameDay(date, new Date())) {
                     dayButton.setForeground(Color.RED);
                 }
@@ -200,7 +203,7 @@ public class MyDatePicker extends JPanel {
         }
 
         /**
-         * 设置选择的日期
+         * Sets the selected date.
          */
         public void setSelectionDate(Date date) {
             Date oldDate = this.selectionDate;
@@ -210,40 +213,14 @@ public class MyDatePicker extends JPanel {
         }
 
         /**
-         * 获取选择的日期
+         * Returns the selected date.
          */
         public Date getSelectionDate() {
             return selectionDate;
         }
 
         /**
-         * 导航到上个月
-         */
-        public void previousMonth() {
-            if (currentMonth == 0) {
-                currentMonth = 11;
-                currentYear--;
-            } else {
-                currentMonth--;
-            }
-            updateMonthView();
-        }
-
-        /**
-         * 导航到下个月
-         */
-        public void nextMonth() {
-            if (currentMonth == 11) {
-                currentMonth = 0;
-                currentYear++;
-            } else {
-                currentMonth++;
-            }
-            updateMonthView();
-        }
-
-        /**
-         * 检查两个日期是否是同一天
+         * Checks whether two dates fall on the same day.
          */
         private boolean isSameDay(Date date1, Date date2) {
             if (date1 == null || date2 == null) { return false; }
