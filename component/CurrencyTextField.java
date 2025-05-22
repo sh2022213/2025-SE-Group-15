@@ -68,7 +68,7 @@ public class CurrencyTextField extends JFormattedTextField {
         if (value instanceof BigDecimal) {
             super.setValue(((BigDecimal) value).doubleValue());
         } else {
-            super.setValue(value); 
+            super.setValue(value != null ? value : 0.00);
         }
     }
 }
