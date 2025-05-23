@@ -1,0 +1,42 @@
+[
+  {
+    "id": "58fe2838-22e0-4c61-9179-650143b21cc2",
+    "category": "Food",
+    "amount": 1000.00,
+    "startDate": "2025-05-01",
+    "endDate": "2025-06-01",
+    "spentAmount": 0
+  },
+  {
+    "id": "87858456-a0b5-48e1-a09d-7dc1ae3caa88",
+    "category": "Transportation",
+    "amount": 500.00,
+    "startDate": "2025-05-01",
+    "endDate": "2025-06-01",
+    "spentAmount": 0
+  },
+  {
+    "id": "efb4946e-a3f4-42be-8d82-4d99455c7234",
+    "category": "Shopping",
+    "amount": 1500.00,
+    "startDate": "2025-05-01",
+    "endDate": "2025-06-01",
+    "spentAmount": 0
+  },
+  {
+    "id": "13ec13d7-f3ff-487b-bb9f-04715f8f844d",
+    "category": "Housing",
+    "amount": 1500.00,
+    "startDate": "2025-05-01",
+    "endDate": "2025-06-01",
+    "spentAmount": 0
+  },
+  {
+    "id": "c356809a-1e62-4173-9317-ba89444d482b",
+    "category": "Education",
+    "amount": 800.00,
+    "startDate": "2025-05-01",
+    "endDate": "2025-06-01",
+    "spentAmount": 0
+  }
+]

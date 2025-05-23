@@ -18,11 +18,56 @@
     "isRecurring": false
   },
   {
-    "id": "2da7d7ea-8bb4-46f9-a95b-637a218157a4",
-    "amount": 200.0,
-    "category": "Shopping",
+    "id": "e390d651-c63a-44c9-b224-722f4e0c4d57",
+    "amount": 100.0,
+    "category": "Food",
     "type": "EXPENSE",
     "date": "2025-05-01",
+    "description": "food",
+    "isRecurring": false
+  },
+  {
+    "id": "a236ab62-0bd8-4957-9c41-f6c36ad133a6",
+    "amount": 300.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-05-02",
+    "description": "food",
+    "isRecurring": false
+  },
+  {
+    "id": "3a1d75ac-d439-42e2-bc3b-e4e5954a352d",
+    "amount": 100.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-05-03",
+    "description": "food",
+    "isRecurring": false
+  },
+  {
+    "id": "61ada26f-4916-4df0-9c26-9847ccd7687b",
+    "amount": 50.0,
+    "category": "Education",
+    "type": "EXPENSE",
+    "date": "2025-06-01",
+    "description": "book",
+    "isRecurring": false
+  },
+  {
+    "id": "2896fc8d-de33-47ee-83eb-c986b831644c",
+    "amount": 50.0,
+    "category": "Education",
+    "type": "EXPENSE",
+    "date": "2025-06-01",
+    "description": "book",
+    "isRecurring": false
+  },
+  {
+    "id": "1b601e84-866c-4e19-bbd5-4fe17e3c0549",
+    "amount": 500.0,
+    "category": "Shopping",
+    "type": "EXPENSE",
+    "date": "2025-06-01",
     "description": "taobao",
     "isRecurring": false
   }

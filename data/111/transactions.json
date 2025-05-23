@@ -1,0 +1,83 @@
+[
+  {
+    "id": "38021c00-729e-43a3-be7c-9cb33dbf52a9",
+    "amount": 1000.0,
+    "category": "Salary",
+    "type": "INCOME",
+    "date": "2025-05-23",
+    "description": "salary",
+    "isRecurring": false
+  },
+  {
+    "id": "0d26ea47-95ab-4934-bac1-011d0df8abe9",
+    "amount": 500.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-02-01",
+    "description": "eating",
+    "isRecurring": false
+  },
+  {
+    "id": "bf76d9a4-ba18-4acd-94af-f43cd41e47b1",
+    "amount": 10000.0,
+    "category": "Salary",
+    "type": "INCOME",
+    "date": "2025-05-01",
+    "description": "salary",
+    "isRecurring": false
+  },
+  {
+    "id": "4a9b11e4-33ed-46fa-b3fc-a9208b39ed4c",
+    "amount": 200.0,
+    "category": "Education",
+    "type": "EXPENSE",
+    "date": "2025-05-01",
+    "description": "book",
+    "isRecurring": false
+  },
+  {
+    "id": "038644fe-6e15-47a9-acad-2032b037e5ea",
+    "amount": 100.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-05-23",
+    "description": "eating",
+    "isRecurring": false
+  },
+  {
+    "id": "e6bcf94b-484d-4df9-a52b-43946733ba8d",
+    "amount": 1000.0,
+    "category": "Housing",
+    "type": "EXPENSE",
+    "date": "2025-05-05",
+    "description": "rent",
+    "isRecurring": false
+  },
+  {
+    "id": "3f2e03c8-3a03-469f-951a-d5f4a91b9dac",
+    "amount": 1200.0,
+    "category": "Housing",
+    "type": "EXPENSE",
+    "date": "2025-05-16",
+    "description": "rent",
+    "isRecurring": false
+  },
+  {
+    "id": "377c3255-ac3c-4f24-8aab-0c07ef90eb92",
+    "amount": 50.0,
+    "category": "Transportation",
+    "type": "EXPENSE",
+    "date": "2025-05-10",
+    "description": "bus",
+    "isRecurring": false
+  },
+  {
+    "id": "b738b2a4-21bf-47bc-ab17-254c1004f1fc",
+    "amount": 100.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-04-23",
+    "description": "eating",
+    "isRecurring": false
+  }
+]

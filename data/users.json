@@ -49,5 +49,22 @@
       "Gifts"
     ],
     "currency": "CNY"
+  },
+  {
+    "username": "111",
+    "passwordHash": "5666fa60",
+    "avatarPath": "avatars/default-avatar.png",
+    "categories": [
+      "Food",
+      "Transportation",
+      "Shopping",
+      "Housing",
+      "Entertainment",
+      "Salary",
+      "Health",
+      "Education",
+      "Gifts"
+    ],
+    "currency": "CNY"
   }
 ]

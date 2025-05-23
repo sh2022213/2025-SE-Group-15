@@ -1,5 +1,5 @@
 package com.personalfinance.model;
-// Transaction.java：定义交易记录，封装金额、分类、类型等核心字段
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
