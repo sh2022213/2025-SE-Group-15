@@ -1,7 +1,12 @@
 package com.personalfinance.model;
-
+// User.java：抽象用户实体，包含身份验证、分类配置等属性
 import java.util.Arrays;
 import java.util.List;
+
+
+
+
+
 
 public class User {
     private String username;
@@ -10,6 +15,7 @@ public class User {
     private List<String> categories = Arrays.asList("Food", "Transportation", "Shopping", "Housing", "Entertainment", "Salary", "Health" , "Education" , "Gifts"    );
     private String currency = "CNY";
 
+    public User(){}
     // 验证密码
     public boolean validatePassword(String inputPassword) {
         return this.passwordHash.equals(hashPassword(inputPassword));
@@ -39,8 +45,4 @@ public class User {
 
     public String getCurrency() { return currency; }
     public void setCurrency(String currency) { this.currency = currency; }
-
-
-    
-    
 }

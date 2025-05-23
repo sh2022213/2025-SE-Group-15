@@ -6,14 +6,13 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;  
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-// 实现 txt 文件解析器  
-public class TxtFileParser implements FileParser {   
+// 实现 txt 文件解析器
+public class TxtFileParser implements FileParser {
     private final FinanceController controller;
 
     public TxtFileParser(FinanceController controller) {

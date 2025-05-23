@@ -5,8 +5,8 @@ import com.personalfinance.controller.FinanceController;
 import com.personalfinance.view.LoginDialog;
 import com.personalfinance.view.MainFrame;
 
+import javax.swing.*;
 
-import javax.swing.*; 
 
 
 public class MainSystem {

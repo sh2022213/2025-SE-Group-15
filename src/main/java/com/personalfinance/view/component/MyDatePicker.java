@@ -216,31 +216,6 @@ public class MyDatePicker extends JPanel {
             return selectionDate;
         }
 
-        /**
-         * 导航到上个月
-         */
-        public void previousMonth() {
-            if (currentMonth == 0) {
-                currentMonth = 11;
-                currentYear--;
-            } else {
-                currentMonth--;
-            }
-            updateMonthView();
-        }
-
-        /**
-         * 导航到下个月
-         */
-        public void nextMonth() {
-            if (currentMonth == 11) {
-                currentMonth = 0;
-                currentYear++;
-            } else {
-                currentMonth++;
-            }
-            updateMonthView();
-        }
 
         /**
          * 检查两个日期是否是同一天

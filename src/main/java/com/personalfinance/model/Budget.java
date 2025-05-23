@@ -1,5 +1,5 @@
 package com.personalfinance.model;
-
+// Budget.java：描述预算规则，关联分类和时间范围
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -41,7 +41,4 @@ public class Budget {
     public boolean isOverBudget() {
         return spentAmount.compareTo(amount) > 0;
     }
-    
-
-    
 }
