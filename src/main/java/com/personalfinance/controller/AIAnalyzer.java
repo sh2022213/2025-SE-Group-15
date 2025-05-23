@@ -90,6 +90,27 @@ public class AIAnalyzer {
             report.append(String.format(" - %s\n", advice));
         });
 
+
+        // ==== 新增：6. 下月消费预测 ====
+        report.append("\n6. Next Month Spending Forecast:\n");
+        Map<String, BigDecimal> forecast = getSpendingForecast();
+
+        // 仅获取下个月的预测值（第一个键值对）
+        Optional<Map.Entry<String, BigDecimal>> nextMonthForecast =
+                forecast.entrySet().stream().findFirst();
+
+        if (nextMonthForecast.isPresent()) {
+            String month = nextMonthForecast.get().getKey();
+            BigDecimal amount = nextMonthForecast.get().getValue();
+            report.append(String.format(" - %s月: %s\n",
+                    month.replace("Month", ""), // 移除"Month"后缀，更简洁
+                    formatMoney(amount)
+            ));
+        } else {
+            report.append(" - No forecast data available\n");
+        }
+
+
         return report.toString();
     }
 

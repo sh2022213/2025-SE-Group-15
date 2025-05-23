@@ -86,7 +86,7 @@ public class AnalysisPanel extends JPanel {
             }
         });
         categoryChart = ChartFactory.createPieChart(
-                "Expense Category Proportion",
+                "Expense Category Proportion (All expenditure)",
                 dataset,
                 true, true, false
         );
@@ -143,7 +143,7 @@ public class AnalysisPanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         budgetChart = ChartFactory.createBarChart(
-                "Budget Execution Status",
+                "Budget Execution Status(This Month)",
                 "Category",
                 "Amount",
                 dataset
@@ -184,7 +184,7 @@ public class AnalysisPanel extends JPanel {
                 .orElse("None");
 
         panel.add(createSummaryCard("Total Expense", formatCurrency(totalSpending), Color.RED));
-        panel.add(createSummaryCard("Average Expense", formatCurrency(avgSpending), Color.BLUE));
+        panel.add(createSummaryCard("Average Expense(every transaction)", formatCurrency(avgSpending), Color.BLUE));
         panel.add(createSummaryCard("Category with Maximum Expense", maxCategory, new Color(0, 128, 0)));
 
         return panel;

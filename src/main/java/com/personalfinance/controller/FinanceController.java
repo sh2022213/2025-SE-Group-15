@@ -72,13 +72,20 @@ public class FinanceController {
         // 如果没有预算数据，初始化默认预算
         if (budgets.isEmpty()) {
             Calendar cal = Calendar.getInstance();
-            Date startDate = cal.getTime();
+
+            // 设置为当前月份的第一天（时间部分不影响存储格式）
+            cal.set(Calendar.DAY_OF_MONTH, 1);
+            Date startDate = cal.getTime(); // 示例：2025-05-01 14:30:45（实际存储为 "2025-05-01"）
+
+            // 增加1个月，得到下个月的第一天
             cal.add(Calendar.MONTH, 1);
-            Date endDate = cal.getTime();
+            Date endDate = cal.getTime(); // 示例：2025-06-01 14:30:45（实际存储为 "2025-06-01"）
 
             budgets.add(new Budget("Food", new BigDecimal("1000.00"), startDate, endDate));
             budgets.add(new Budget("Transportation", new BigDecimal("500.00"), startDate, endDate));
             budgets.add(new Budget("Shopping", new BigDecimal("1500.00"), startDate, endDate));
+            budgets.add(new Budget("Housing", new BigDecimal("1500.00"), startDate, endDate));
+            budgets.add(new Budget("Education", new BigDecimal("800.00"), startDate, endDate));
 
             saveBudgets();
         }
@@ -395,6 +402,28 @@ public class FinanceController {
 
         this.user = newUser;
         return true;
+    }
+
+    public Map<String, BigDecimal> getCurrentMonthCategorySpending() {
+        Map<String, BigDecimal> result = new HashMap<>();
+        user.getCategories().forEach(category ->
+                result.put(category, BigDecimal.ZERO));
+
+        Calendar cal = Calendar.getInstance();
+        int currentYear = cal.get(Calendar.YEAR);
+        int currentMonth = cal.get(Calendar.MONTH) + 1;
+
+        transactions.stream()
+                .filter(t -> "EXPENSE".equals(t.getType()))
+                .filter(t -> {
+                    Calendar tCal = Calendar.getInstance();
+                    tCal.setTime(t.getDate());
+                    return tCal.get(Calendar.YEAR) == currentYear
+                            && tCal.get(Calendar.MONTH) + 1 == currentMonth;
+                })
+                .forEach(t -> result.merge(t.getCategory(), t.getAmount(), BigDecimal::add));
+
+        return result;
     }
 
 }
