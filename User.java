@@ -3,6 +3,11 @@ package com.personalfinance.model;
 import java.util.Arrays;
 import java.util.List;
 
+
+
+
+
+
 public class User {
     private String username;
     private String passwordHash;
