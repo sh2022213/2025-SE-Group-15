@@ -1,6 +1,6 @@
 # 2025-SE-Group-15 Project Description
 
-This is the project of our group in the 2025 Software Engineering course, aiming to implement a Personal Finance Management System.
+This is the project of our group in the 2025 Software Engineering course, aiming to implement a Personal Finance Management System. 
 
 ## Project Structure
 
