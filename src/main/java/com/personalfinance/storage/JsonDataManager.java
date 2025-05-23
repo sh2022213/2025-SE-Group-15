@@ -103,6 +103,43 @@ public class JsonDataManager {
             Type type = typeToken.getType();
             return gson.fromJson(reader, type);
         } catch (IOException e) {
+            throw new RuntimeException("无法创建用户数据目录", e);
+        }
+        Path path = Paths.get(getUserDataPath(username, filename));
+        try (Writer writer = Files.newBufferedWriter(path)) {
+            gson.toJson(data, writer);
+        } catch (IOException e) {
+            throw new RuntimeException("Save failed: " + filename, e);
+        }
+    }
+
+    /**
+     * 从JSON文件加载泛型集合
+     * @param filename 文件名（不需要路径）
+     * @param typeToken 类型标记，例如 new TypeToken<List<Transaction>>(){}
+     * @param <T> 返回类型
+     * @return 加载的集合，如果文件不存在返回空集合
+     */
+    public <T> T loadCollection(String filename, TypeToken<T> typeToken, String username) {
+        Path path = Paths.get(getUserDataPath(username, filename));
+        if (!Files.exists(path)) {
+            // 检查是否是 List 类型
+            if (List.class.isAssignableFrom(typeToken.getRawType())) {
+                return (T) new ArrayList<>();
+            }
+            try {
+                return (T) typeToken.getRawType().newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Unable to create empty collection", e);
+            }
+
+        }
+
+        try (Reader reader = Files.newBufferedReader(path)) {
+            Type type = typeToken.getType();
+            return gson.fromJson(reader, type);
+        } catch (IOException e) {
             throw new RuntimeException("Load Fail: " + filename, e);
         }
     }
@@ -148,8 +185,8 @@ public class JsonDataManager {
     }
 
     /**
-     * 删除数据文件
-     * @param filename 文件名
+     * 删除数据文件 
+     * @param filename 文件名 
      */
     public void delete(String filename) {
         try {
