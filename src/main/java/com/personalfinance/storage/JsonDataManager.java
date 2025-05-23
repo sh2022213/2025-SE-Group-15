@@ -148,7 +148,7 @@ public class JsonDataManager {
     }
 
     /**
-     * 删除数据文件+
+     * 删除数据文件
      * @param filename 文件名
      */
     public void delete(String filename) {
@@ -159,4 +159,3 @@ public class JsonDataManager {
         }
     }
 }
- 

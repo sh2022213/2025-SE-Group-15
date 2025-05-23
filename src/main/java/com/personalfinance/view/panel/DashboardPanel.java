@@ -69,7 +69,7 @@ public class DashboardPanel extends JPanel {
         // 预算执行图表
         DefaultPieDataset budgetDataset = new DefaultPieDataset();
         budgetChart = ChartFactory.createPieChart(
-                "Budget Execution Status",
+                "This Month Budget Execution Status",
                 budgetDataset,
                 true, true, false
         );
@@ -96,7 +96,7 @@ public class DashboardPanel extends JPanel {
         PiePlot plot = (PiePlot) spendingChart.getPlot();
         DefaultPieDataset dataset = (DefaultPieDataset) plot.getDataset();
         dataset.clear();
-        controller.getCategorySpending().forEach((category, amount) -> {
+        controller.getCurrentMonthCategorySpending().forEach((category, amount) -> {
             if (amount.compareTo(BigDecimal.ZERO) > 0) {
                 dataset.setValue(category + " (" + MoneyUtils.formatMoney(amount) + ")", amount);
             }
@@ -129,7 +129,7 @@ public class DashboardPanel extends JPanel {
     }
 
     private void refreshMetrics() {
-        // 移除旧的指标面板.
+        // 移除旧的指标面板
         Component[] components = getComponents();
         for (Component comp : components) {
             if (comp instanceof JPanel && comp.getBounds().y < 100) { // 简单判断顶部面板
@@ -155,11 +155,11 @@ public class DashboardPanel extends JPanel {
                 .filter(b -> !b.isOverBudget())
                 .count();
 
-        panel.add(createMetricCard("Current Balance", balance,
+        panel.add(createMetricCard("Current Balance (All income and expenditure)", balance,
                 balance.compareTo(BigDecimal.ZERO) >= 0 ? Color.GREEN.darker() : Color.RED));
         panel.add(createMetricCard("This Month's Income", income, new Color(0, 128, 0)));
         panel.add(createMetricCard("This Month's Expense", expense, Color.RED));
-        panel.add(createMetricCard("On - Track Budgets", activeBudgets + "/" + controller.getBudgets().size(),
+        panel.add(createMetricCard("On - Track Budgets (This Month)", activeBudgets + "/" + controller.getBudgets().size(),
                 new Color(0, 0, 139)));
 
         return panel;

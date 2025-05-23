@@ -9,10 +9,10 @@ import com.personalfinance.storage.JsonDataManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.util.*;  
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class FinanceController {   
+public class FinanceController {
     private final AIAnalyzer        aiAnalyzer;
     private final JsonDataManager   dataManager;
     private       List<Transaction> transactions;
@@ -22,8 +22,12 @@ public class FinanceController {
     public FinanceController() {
         this.aiAnalyzer = new AIAnalyzer(this);
         this.dataManager = new JsonDataManager();
-        loadAllData();
-        initializeDefaultData();
+        //loadAllData();
+        //initializeDefaultData();
+    }
+
+    public String getUserFilePath( String fileName){
+        return dataManager.getUserDataPath(this.user.getUsername(), fileName);
     }
 
     public AIAnalyzer getAIAnalyzer() {
@@ -32,64 +36,56 @@ public class FinanceController {
 
     // 核心数据操作方法
     // ==============================================
-
-    private void loadAllData() {
-        // 加载交易记录
-        this.transactions = dataManager.loadCollection(
-                "transactions.json",
-                new TypeToken<List<Transaction>>() {}
-        );
-
-        // 加载预算
-        this.budgets = dataManager.loadCollection(
-                "budgets.json",
-                new TypeToken<List<Budget>>() {}
-        );
-
-        // 加载用户数据
-        this.user = dataManager.load("user.json", User.class);
-        if (this.user == null) {
-            this.user = new User();
-        }
-    }
-
     private void initializeDefaultData() {
+        if (transactions == null) {
+            transactions = new ArrayList<>();
+        }
+        if (budgets == null) {
+            budgets = new ArrayList<>();
+        }
         // 如果没有任何交易记录，初始化一些示例数据
         if (transactions.isEmpty()) {
-            Calendar cal = Calendar.getInstance();
+            // Calendar cal = Calendar.getInstance();
 
-            // 添加示例收入
-            transactions.add(new Transaction(
-                    new BigDecimal("15000.00"),
-                    "Salary",
-                    "INCOME",
-                    cal.getTime(),
-                    "monthly pay"
-            ));
+            // // 添加示例收入
+            // transactions.add(new Transaction(
+            //         new BigDecimal("15000.00"),
+            //         "Salary",
+            //         "INCOME",
+            //         cal.getTime(),
+            //         "monthly pay"
+            // ));
 
-            // 添加示例支出
-            cal.add(Calendar.DATE, -5);
-            transactions.add(new Transaction(
-                    new BigDecimal("2500.00"),
-                    "Housing",
-                    "EXPENSE",
-                    cal.getTime(),
-                    "Rent for November"
-            ));
+            // // 添加示例支出
+            // cal.add(Calendar.DATE, -5);
+            // transactions.add(new Transaction(
+            //         new BigDecimal("2500.00"),
+            //         "Housing",
+            //         "EXPENSE",
+            //         cal.getTime(),
+            //         "Rent for November"
+            // ));
 
-            saveTransactions();
+            // saveTransactions();
         }
 
         // 如果没有预算数据，初始化默认预算
         if (budgets.isEmpty()) {
             Calendar cal = Calendar.getInstance();
-            Date startDate = cal.getTime();
+
+            // 设置为当前月份的第一天（时间部分不影响存储格式）
+            cal.set(Calendar.DAY_OF_MONTH, 1);
+            Date startDate = cal.getTime(); // 示例：2025-05-01 14:30:45（实际存储为 "2025-05-01"）
+
+            // 增加1个月，得到下个月的第一天
             cal.add(Calendar.MONTH, 1);
-            Date endDate = cal.getTime();
+            Date endDate = cal.getTime(); // 示例：2025-06-01 14:30:45（实际存储为 "2025-06-01"）
 
             budgets.add(new Budget("Food", new BigDecimal("1000.00"), startDate, endDate));
             budgets.add(new Budget("Transportation", new BigDecimal("500.00"), startDate, endDate));
             budgets.add(new Budget("Shopping", new BigDecimal("1500.00"), startDate, endDate));
+            budgets.add(new Budget("Housing", new BigDecimal("1500.00"), startDate, endDate));
+            budgets.add(new Budget("Education", new BigDecimal("800.00"), startDate, endDate));
 
             saveBudgets();
         }
@@ -118,22 +114,22 @@ public class FinanceController {
     public void addTransaction(Transaction transaction) {
         transaction.setId(UUID.randomUUID().toString());
         transactions.add(transaction);
-        saveTransactions();
+        saveTransactions(transactions);
         updateBudgetSpending();
     }
 
     public void updateTransaction(Transaction transaction) {
         transactions.removeIf(t -> t.getId().equals(transaction.getId()));
         transactions.add(transaction);
-        saveTransactions();
+        saveTransactions(transactions);
         updateBudgetSpending();
     }
 
     public boolean deleteTransaction(String transactionId) {
         boolean removed = transactions.removeIf(t -> t.getId().equals(transactionId));
         if (removed) {
-            dataManager.save("transactions.json", transactions);
-            saveTransactions();
+            //dataManager.save("transactions.json", transactions,user.getUsername());
+            saveTransactions(transactions);
             updateBudgetSpending();
             return true;
         }
@@ -270,16 +266,12 @@ public class FinanceController {
     // 数据持久化方法
     // ==============================================
 
-    public void saveTransactions() {
-        dataManager.save("transactions.json", transactions);
+    public void saveTransactions(List<Transaction> transactions) {
+        dataManager.save("transactions.json", transactions, user.getUsername());
     }
 
     public void saveBudgets() {
-        dataManager.save("budgets.json", budgets);
-    }
-
-    public void saveUser() {
-        dataManager.save("user.json", user);
+        dataManager.save("budgets.json", budgets, user.getUsername());
     }
 
     // Getter方法
@@ -297,27 +289,101 @@ public class FinanceController {
         return user;
     }
 
-    public boolean changePassword(String oldPassword, String newPassword) {
-        if (user.validatePassword(oldPassword)) {
-            user.setPassword(newPassword);
-            saveUser();
-            return true;
+    /**
+     * 修改用户密码
+     * @param username 用户名
+     * @param newPassword 新密码
+     * @return 是否修改成功
+     */
+    public boolean changePassword(String username, String newPassword) {
+        List<User> users = dataManager.loadUsers();
+        if (users == null) {return false;}
+
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                user.setPassword(newPassword);
+                dataManager.saveUsers(users);
+                this.user = user; // 更新当前用户对象
+                return true;
+            }
         }
         return false;
     }
 
     /**
+     * 更新用户信息（如头像）
+     * @param updatedUser 更新后的用户对象
+     * @return 是否更新成功
+     */
+    public boolean updateUser(User updatedUser) {
+        List<User> users = dataManager.loadUsers();
+        if (users == null) {return false;}
+
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getUsername().equals(updatedUser.getUsername())) {
+                users.set(i, updatedUser);
+                dataManager.saveUsers(users);
+                this.user = updatedUser; // 更新当前用户对象
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
      * 检查用户名是否存在
      */
     public boolean userExists(String username) {
-        User existingUser = dataManager.load("user.json", User.class);
-        return existingUser != null && existingUser.getUsername().equals(username);
+        List<User> users = dataManager.loadUsers();
+        return users != null && users.stream()
+                .anyMatch(u -> u.getUsername().equals(username));
     }
 
+    public boolean loginUser(String username, String password) {
+        List<User> users = dataManager.loadUsers();
+        if (users == null) {return false;}
+
+        Optional<User> userOpt = users.stream()
+                .filter(u -> u.getUsername().equals(username))
+                .findFirst();
+
+        if (userOpt.isPresent() && userOpt.get().validatePassword(password)) {
+            this.user = userOpt.get();
+            loadAllData(); // 加载该用户的数据
+            return true;
+        }
+        return false;
+    }
+
+    public User getLoginUser(){
+        return this.user;
+    }
+
+    private void loadAllData() {
+        if (user == null){ return;}
+        // 加载交易记录
+        this.transactions = dataManager.loadCollection(
+                "transactions.json",
+                new TypeToken<List<Transaction>>() {},user.getUsername()
+        );
+
+        // 加载预算
+        this.budgets = dataManager.loadCollection(
+                "budgets.json",
+                new TypeToken<List<Budget>>() {},user.getUsername()
+        );
+        initializeDefaultData();
+    }
     /**
      * 注册新用户
      */
     public boolean registerUser(String username, String password) {
+        List<User> users = dataManager.loadUsers();
+        if (users == null) {
+            users = new ArrayList<>();
+        }
+
         if (userExists(username)) {
             return false;
         }
@@ -325,9 +391,39 @@ public class FinanceController {
         User newUser = new User();
         newUser.setUsername(username);
         newUser.setPassword(password);
-        dataManager.save("user.json", newUser);
+
+
+        users.add(newUser);
+        dataManager.saveUsers(users);
+
+        // 初始化用户数据目录
+        dataManager.save("transactions.json", new ArrayList<Transaction>(), username);
+        dataManager.save("budgets.json", new ArrayList<Budget>(), username);
+
         this.user = newUser;
         return true;
+    }
+
+    public Map<String, BigDecimal> getCurrentMonthCategorySpending() {
+        Map<String, BigDecimal> result = new HashMap<>();
+        user.getCategories().forEach(category ->
+                result.put(category, BigDecimal.ZERO));
+
+        Calendar cal = Calendar.getInstance();
+        int currentYear = cal.get(Calendar.YEAR);
+        int currentMonth = cal.get(Calendar.MONTH) + 1;
+
+        transactions.stream()
+                .filter(t -> "EXPENSE".equals(t.getType()))
+                .filter(t -> {
+                    Calendar tCal = Calendar.getInstance();
+                    tCal.setTime(t.getDate());
+                    return tCal.get(Calendar.YEAR) == currentYear
+                            && tCal.get(Calendar.MONTH) + 1 == currentMonth;
+                })
+                .forEach(t -> result.merge(t.getCategory(), t.getAmount(), BigDecimal::add));
+
+        return result;
     }
 
 }

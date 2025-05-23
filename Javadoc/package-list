@@ -1,0 +1,8 @@
+com.personalfinance
+com.personalfinance.controller
+com.personalfinance.model
+com.personalfinance.storage
+com.personalfinance.view
+com.personalfinance.view.component
+com.personalfinance.view.panel
+com.personalfinance.view.util

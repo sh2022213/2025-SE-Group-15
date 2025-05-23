@@ -1,0 +1,26 @@
+[
+  {
+    "id": "a1a708d7-4504-4fe4-9fdd-d5c6b2fd5c4f",
+    "category": "Food",
+    "amount": 1000.00,
+    "startDate": "2025-04-26",
+    "endDate": "2025-05-26",
+    "spentAmount": 0
+  },
+  {
+    "id": "9c528a15-d9de-4a48-9899-138ff4a99340",
+    "category": "Transportation",
+    "amount": 500.00,
+    "startDate": "2025-04-26",
+    "endDate": "2025-05-26",
+    "spentAmount": 0
+  },
+  {
+    "id": "00d41724-eec7-4cbb-9a10-e15f605b175e",
+    "category": "Shopping",
+    "amount": 1500.00,
+    "startDate": "2025-04-26",
+    "endDate": "2025-05-26",
+    "spentAmount": 0
+  }
+]
