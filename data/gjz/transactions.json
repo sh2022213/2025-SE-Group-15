@@ -1,56 +1,65 @@
 [
   {
-    "id": "ddb49be2-2a59-4d45-9116-4f47bc414957",
-    "amount": 54.0,
-    "category": "Food",
-    "type": "EXPENSE",
-    "date": "2025-05-03",
-    "description": "clothing",
-    "isRecurring": false
-  },
-  {
-    "id": "fe3e258c-2dfe-4542-86a3-cc42b2317775",
-    "amount": 4.0,
-    "category": "Food",
-    "type": "EXPENSE",
-    "date": "2025-05-03",
-    "description": "clothing",
-    "isRecurring": false
-  },
-  {
-    "id": "04e97df5-0f65-4c53-a0d6-cf84e422dfc6",
-    "amount": 4.0,
-    "category": "Food",
-    "type": "EXPENSE",
-    "date": "2025-05-02",
-    "description": "clothing",
-    "isRecurring": false
-  },
-  {
-    "id": "1cbf3edf-9ab4-499f-8916-011b71477d6d",
-    "amount": 12.0,
-    "category": "Shopping",
-    "type": "EXPENSE",
-    "date": "2025-05-03",
-    "description": "clothing",
-    "isRecurring": false
-  },
-  {
-    "id": "c506aa8c-0c75-4bcb-94c5-d4edc9407835",
-    "amount": 200.0,
-    "category": "Shopping",
-    "type": "INCOME",
-    "date": "2025-05-01",
-    "description": "taobao",
-    "isRecurring": false
-  },
-  {
-    "id": "ad5c2283-e270-475e-8312-d3fa1d8a1ddd",
-    "amount": 200.0,
-    "category": "Shopping",
+    "id": "d9121ed2-69cb-4e61-8152-2aa2abbfbc77",
+    "amount": 100.0,
+    "category": "Education",
     "type": "EXPENSE",
     "date": "2025-05-01",
-    "description": "taobao",
+    "description": "book",
+    "isRecurring": false
+  },
+  {
+    "id": "d6f0da85-718c-40fb-a74c-35607a2fe3d4",
+    "amount": 100.0,
+    "category": "Education",
+    "type": "EXPENSE",
+    "date": "2025-02-01",
+    "description": "book",
+    "isRecurring": false
+  },
+  {
+    "id": "8c5f5905-9c7a-4b16-bb08-7cc8297827b5",
+    "amount": 100.0,
+    "category": "Education",
+    "type": "EXPENSE",
+    "date": "2025-06-05",
+    "description": "book",
+    "isRecurring": false
+  },
+  {
+    "id": "b2ceb8d6-fed3-4c3b-87c9-30b5bf21cb06",
+    "amount": 100.0,
+    "category": "Education",
+    "type": "EXPENSE",
+    "date": "2025-05-23",
+    "description": "book",
+    "isRecurring": false
+  },
+  {
+    "id": "56952e4a-91f7-4fde-a580-710dba151573",
+    "amount": 100.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-05-23",
+    "description": "food",
+    "isRecurring": false
+  },
+  {
+    "id": "01032a8f-ce66-4270-8c62-fa46add95fd9",
+    "amount": 100.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-04-23",
+    "description": "food",
+    "isRecurring": false
+  },
+  {
+    "id": "c2fb7fd3-53f2-46cd-96b4-2b6137452cd8",
+    "amount": 5200000.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-04-23",
+    "description": "eating",
     "isRecurring": false
   }
 ]

@@ -173,28 +173,28 @@ public class LoginDialog extends JDialog {
 
             if (username.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
-                        "用户名和密码不能为空", "注册失败",
+                        "The username and password cannot be left blank", "Fail to register",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (!password.equals(confirm)) {
                 JOptionPane.showMessageDialog(this,
-                        "两次输入的密码不一致", "注册失败",
+                        "The two entered passwords are not the same", "Fail to register",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (password.length() < 6) {
                 JOptionPane.showMessageDialog(this,
-                        "密码长度不能少于6位", "注册失败",
+                        "The password length must be no less than 6 characters", "Fail to register",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (controller.userExists(username)) {
                 JOptionPane.showMessageDialog(this,
-                        "用户名已存在", "注册失败",
+                        "Username already exists", "Fail to register",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -204,7 +204,7 @@ public class LoginDialog extends JDialog {
             registeredUsername = username;
 
             JOptionPane.showMessageDialog(this,
-                    "注册成功，请登录", "注册成功",
+                    "Registration successful. Please log in", "Registration successful",
                     JOptionPane.INFORMATION_MESSAGE);
 
             // 切换回登录面板

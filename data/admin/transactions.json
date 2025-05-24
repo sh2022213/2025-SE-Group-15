@@ -80,12 +80,21 @@
     "isRecurring": false
   },
   {
-    "id": "7ad8c4c0-e52c-4999-a857-919a72deef85",
-    "amount": 9999.0,
+    "id": "875eb1ae-415d-4cdb-83b3-e97a3dfdd029",
+    "amount": 1500.0,
     "category": "Shopping",
     "type": "EXPENSE",
-    "date": "2025-06-01",
+    "date": "2025-03-23",
     "description": "taobao",
+    "isRecurring": false
+  },
+  {
+    "id": "47834c66-925a-4b45-becc-8be6bdc9b05c",
+    "amount": 120.0,
+    "category": "Food",
+    "type": "EXPENSE",
+    "date": "2025-05-19",
+    "description": "eating",
     "isRecurring": false
   }
 ]
